@@ -20,13 +20,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('overview/index');
     })->name('dashboard');
     
-    // IT Dashboard Routes
-    Route::get('hpboc', [HpbocController::class, 'index'])->name('hpboc.index');
-    
-    Route::get('radio', [RadioController::class, 'index'])->name('radio.index');
-    
-    Route::get('telephone', [TelephoneController::class, 'index'])->name('telephone.index');
-    
+    // IT Dashboard Routes - using controllers with auth
     Route::get('network-device', function () {
         return Inertia::render('network-device/index');
     })->name('network-device.index');
@@ -42,13 +36,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('ticket', function () {
         return Inertia::render('ticket/index');
     })->name('ticket.index');
+
+    // Resource routes with authentication
+    Route::resource('site', SiteController::class);
+    Route::resource('hpboc', HpbocController::class);
+    Route::resource('radio', RadioController::class);
+    Route::resource('telephone', TelephoneController::class);
+    Route::resource('networkdevice', NetworkDeviceController::class);
 });
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
-
-Route::resource('site', SiteController::class);
-Route::resource('hpboc', HpbocController::class);
-Route::resource('radio', RadioController::class);
-Route::resource('telephone', TelephoneController::class);
-Route::resource('networkdevice', NetworkDeviceController::class);

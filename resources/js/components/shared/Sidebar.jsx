@@ -26,7 +26,7 @@ export default function Sidebar({ activeItem }) {
             {/* Modern Logo Header */}
             <div className="flex h-20 items-center justify-center border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
                 <div className="flex items-center">
-                    <img src="/images/Pertamina.png" alt="Pertamina" className="h-12 w-auto" />
+                    <img src="/images/Pertamina.png" alt="Pertamina" className="p-4" />
                 </div>
             </div>
             
