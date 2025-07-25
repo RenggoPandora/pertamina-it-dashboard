@@ -1,15 +1,16 @@
 <?php
 
+
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\HpbocController;
 use App\Http\Controllers\NetworkDeviceController;
+use App\Http\Controllers\PcDeviceController;
 use App\Http\Controllers\RadioController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\TelephoneController;
-
-
-
+use App\Http\Controllers\CctvController;
+use App\Http\Controllers\TicketController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -29,3 +30,6 @@ Route::resource('hpboc', HpbocController::class);
 Route::resource('radio', RadioController::class);
 Route::resource('telephone', TelephoneController::class);
 Route::resource('networkdevice', NetworkDeviceController::class);
+Route::resource('pcdevices', PcDeviceController::class);
+Route::resource('cctv', CctvController::class);
+Route::resource('ticket', TicketController::class);
