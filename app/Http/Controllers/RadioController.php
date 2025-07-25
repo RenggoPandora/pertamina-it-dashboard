@@ -12,7 +12,7 @@ class RadioController extends Controller
     public function index()
     {
         $radio = Radio::with('site')->latest()->get();
-        return Inertia::render('Radio/Index', [
+        return Inertia::render('radio/index', [
             'radio' => $radio
         ]);
     }
@@ -20,7 +20,7 @@ class RadioController extends Controller
     public function create()
     {
         $sites = Site::all();
-        return Inertia::render('Radio/Create', [
+        return Inertia::render('radio/create', [
             'sites' => $sites
         ]);
     }

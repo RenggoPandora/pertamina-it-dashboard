@@ -13,7 +13,7 @@ class TelephoneController extends Controller
     {
         $telephones = Telephone::with('site')->get();
 
-        return Inertia::render('Telephone/Index', [
+        return Inertia::render('telephone/index', [
             'telephones' => $telephones
         ]);
     }
@@ -22,7 +22,7 @@ class TelephoneController extends Controller
     {
         $sites = Site::all();
 
-        return Inertia::render('Telephone/Create', [
+        return Inertia::render('telephone/create', [
             'sites' => $sites
         ]);
     }

@@ -11,8 +11,8 @@ class HpbocController extends Controller
 {
     public function index()
     {
-        $hpbocs = Hpboc::with('site')->get();
-        return Inertia::render('Hpboc/Index', ['hpbocs' => $hpbocs]);
+        $hpboc = Hpboc::with('site')->get();
+        return Inertia::render('hpboc/index', ['hpboc' => $hpboc]);
     }
 
     public function create()
