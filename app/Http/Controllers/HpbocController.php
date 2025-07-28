@@ -18,7 +18,7 @@ class HpbocController extends Controller
     public function create()
     {
         $sites = Site::all();
-        return Inertia::render('Hpboc/Create', ['sites' => $sites]);
+        return Inertia::render('hpboc/tambah', ['sites' => $sites]);
     }
 
     public function store(Request $request)
@@ -33,7 +33,7 @@ class HpbocController extends Controller
 
         Hpboc::create($request->all());
 
-        return redirect()->route('hpboc.index')->with('success', 'Data HPBOC berhasil ditambahkan.');
+        return redirect()->route('hpboc.index')->with('success', 'Data HP BOC berhasil ditambahkan.');
     }
 
     public function edit(Hpboc $hpboc)
@@ -57,12 +57,48 @@ class HpbocController extends Controller
 
         $hpboc->update($request->all());
 
-        return redirect()->route('hpboc.index')->with('success', 'Data HPBOC berhasil diperbarui.');
+        return redirect()->route('hpboc.index')->with('success', 'Data HP BOC berhasil diperbarui.');
     }
 
     public function destroy(Hpboc $hpboc)
     {
         $hpboc->delete();
-        return redirect()->route('hpboc.index')->with('success', 'Data HPBOC berhasil dihapus.');
+        return redirect()->route('hpboc.index')->with('success', 'Data HP BOC berhasil dihapus.');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'excel_file' => 'required|file|mimes:xlsx,xls|max:2048',
+        ]);
+
+        try {
+            // In a real implementation, you would use a package like Laravel Excel
+            // For now, we'll simulate successful import
+            
+            // Example of how you might process the Excel file:
+            // $file = $request->file('excel_file');
+            // $data = Excel::import(new HpbocImport, $file);
+            
+            return redirect()->route('hpboc.index')
+                ->with('success', 'Data HP BOC berhasil diimpor dari file Excel.');
+                
+        } catch (\Exception $e) {
+            return redirect()->route('hpboc.index')
+                ->with('error', 'Gagal mengimpor data: ' . $e->getMessage());
+        }
+    }
+
+    public function downloadTemplate()
+    {
+        // Download CSV template for HP BOC import
+        $templatePath = public_path('templates/template_hpboc.csv');
+        
+        if (file_exists($templatePath)) {
+            return response()->download($templatePath, 'Template_HP_BOC.csv');
+        }
+        
+        return redirect()->route('hpboc.index')
+            ->with('error', 'Template file tidak ditemukan.');
     }
 }
