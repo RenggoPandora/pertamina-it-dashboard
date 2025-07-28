@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\CctvController;
 use App\Http\Controllers\HpbocController;
 use App\Http\Controllers\NetworkDeviceController;
 use App\Http\Controllers\PcDeviceController;
@@ -23,9 +24,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('pc-device', [PcDeviceController::class, 'index'])->name('pc-device.index');
 
-    Route::get('cctv', function () {
-        return Inertia::render('cctv/index');
-    })->name('cctv.index');
+    Route::get('cctv', [CctvController::class, 'index'])->name('cctv.index');
 
     Route::get('ticket', function () {
         return Inertia::render('ticket/index');
@@ -54,6 +53,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     // PC Device resource routes
     Route::resource('pcdevice', PcDeviceController::class);
+    
+    // CCTV resource routes
+    Route::resource('cctv', CctvController::class);
 });
 
 require __DIR__.'/settings.php';
