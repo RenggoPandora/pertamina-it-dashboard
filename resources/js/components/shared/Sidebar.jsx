@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from '@inertiajs/react';
 
 export default function Sidebar({ activeItem }) {
     const overviewMenuItem = [
@@ -35,7 +36,7 @@ export default function Sidebar({ activeItem }) {
                 {/* Overview Section */}
                 <div className="space-y-1 mb-6">
                     {overviewMenuItem.map((item) => (
-                        <a
+                        <Link
                             key={item.name}
                             href={item.href}
                             className={`group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
@@ -54,7 +55,7 @@ export default function Sidebar({ activeItem }) {
                                 }`}
                             />
                             {item.name}
-                        </a>
+                        </Link>
                     ))}
                 </div>
 
@@ -67,7 +68,7 @@ export default function Sidebar({ activeItem }) {
                     </div>
                     
                     {perangkatMenuItems.map((item) => (
-                        <a
+                        <Link
                             key={item.name}
                             href={item.href}
                             className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
@@ -86,7 +87,7 @@ export default function Sidebar({ activeItem }) {
                                 }`}
                             />
                             {item.name}
-                        </a>
+                        </Link>
                     ))}
                 </div>
 
@@ -99,7 +100,7 @@ export default function Sidebar({ activeItem }) {
                     </div>
                     
                     {monitoringMenuItems.map((item) => (
-                        <a
+                        <Link
                             key={item.name}
                             href={item.href}
                             className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
@@ -118,7 +119,7 @@ export default function Sidebar({ activeItem }) {
                                 }`}
                             />
                             {item.name}
-                        </a>
+                        </Link>
                     ))}
                 </div>
 
@@ -131,7 +132,7 @@ export default function Sidebar({ activeItem }) {
                     </div>
                     
                     {layananMenuItems.map((item) => (
-                        <a
+                        <Link
                             key={item.name}
                             href={item.href}
                             className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
@@ -150,7 +151,7 @@ export default function Sidebar({ activeItem }) {
                                 }`}
                             />
                             {item.name}
-                        </a>
+                        </Link>
                     ))}
                 </div>
             </nav>

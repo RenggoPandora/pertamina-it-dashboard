@@ -18,9 +18,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     // IT Dashboard Routes - using controllers with auth
-    Route::get('network-device', function () {
-        return Inertia::render('network-device/index');
-    })->name('network-device.index');
+    Route::get('network-device', [NetworkDeviceController::class, 'index'])->name('network-device.index');
 
     Route::get('pc-device', [PcDeviceController::class, 'index'])->name('pc-device.index');
 
