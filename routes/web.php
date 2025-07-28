@@ -40,7 +40,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('hpboc/download-template', [HpbocController::class, 'downloadTemplate'])->name('hpboc.download-template');
     Route::resource('hpboc', HpbocController::class);
     
+    // Radio specific routes
+    Route::post('radio/import', [RadioController::class, 'import'])->name('radio.import');
+    Route::get('radio/download-template', [RadioController::class, 'downloadTemplate'])->name('radio.download-template');
     Route::resource('radio', RadioController::class);
+    
     Route::resource('telephone', TelephoneController::class);
     Route::resource('networkdevice', NetworkDeviceController::class);
 });
