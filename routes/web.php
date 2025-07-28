@@ -45,6 +45,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('radio/download-template', [RadioController::class, 'downloadTemplate'])->name('radio.download-template');
     Route::resource('radio', RadioController::class);
     
+    // Telephone specific routes
+    Route::post('telephone/import', [TelephoneController::class, 'import'])->name('telephone.import');
+    Route::get('telephone/download-template', [TelephoneController::class, 'template'])->name('telephone.download-template');
     Route::resource('telephone', TelephoneController::class);
     Route::resource('networkdevice', NetworkDeviceController::class);
 });

@@ -50,7 +50,7 @@ export default function Layout({ children, activeMenuItem, title, subtitle }) {
                     <div className="px-6 py-4 flex justify-between items-center">
                         <div>
                             <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400 mb-1">
-                                <span>Dashboards</span>
+                                <span>Dashboard</span>
                                 <span>›</span>
                                 <span>{activeMenuItem}</span>
                             </div>

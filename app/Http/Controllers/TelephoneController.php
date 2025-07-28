@@ -6,6 +6,10 @@ use App\Models\Telephone;
 use App\Models\Site;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\TelephoneImport;
+use App\Exports\TelephoneExport;
+use App\Exports\TelephoneTemplateExport;
 
 class TelephoneController extends Controller
 {
@@ -22,7 +26,7 @@ class TelephoneController extends Controller
     {
         $sites = Site::all();
 
-        return Inertia::render('telephone/create', [
+        return Inertia::render('telephone/tambah', [
             'sites' => $sites
         ]);
     }
@@ -42,12 +46,37 @@ class TelephoneController extends Controller
         return redirect()->route('telephone.index')->with('success', 'Data Telephone berhasil ditambahkan.');
     }
 
+    public function import(Request $request)
+    {
+        $request->validate([
+            'excel_file' => 'required|mimes:xlsx,xls,csv|max:2048',
+        ]);
+
+        try {
+            Excel::import(new TelephoneImport, $request->file('excel_file'));
+            
+            return redirect()->route('telephone.index')->with('success', 'Data Telephone berhasil diimport.');
+        } catch (\Exception $e) {
+            return redirect()->route('telephone.index')->with('error', 'Gagal mengimport data: ' . $e->getMessage());
+        }
+    }
+
+    public function export()
+    {
+        return Excel::download(new TelephoneExport, 'telephone_data.xlsx');
+    }
+
+    public function template()
+    {
+        return Excel::download(new TelephoneTemplateExport, 'telephone_template.xlsx');
+    }
+
     public function edit($id)
     {
         $telephone = Telephone::findOrFail($id);
         $sites = Site::all();
 
-        return Inertia::render('Telephone/Edit', [
+        return Inertia::render('telephone/edit', [
             'telephone' => $telephone,
             'sites' => $sites
         ]);
