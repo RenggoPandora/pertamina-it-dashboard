@@ -61,16 +61,6 @@ class TelephoneController extends Controller
         }
     }
 
-    public function export()
-    {
-        return Excel::download(new TelephoneExport, 'telephone_data.xlsx');
-    }
-
-    public function template()
-    {
-        return Excel::download(new TelephoneTemplateExport, 'telephone_template.xlsx');
-    }
-
     public function edit($id)
     {
         $telephone = Telephone::findOrFail($id);

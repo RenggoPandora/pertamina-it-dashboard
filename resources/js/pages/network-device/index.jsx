@@ -165,7 +165,7 @@ export default function NetworkDevice({ networkDevices, flash }) {
                                 <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                                 </svg>
-                                Tambah Network Device
+                                Tambah Perangkat
                             </a>
                         </div>
                     </div>
@@ -315,12 +315,7 @@ export default function NetworkDevice({ networkDevices, flash }) {
                                 )}
                             </div>
 
-                            {/* Notice about import not available */}
-                            <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                                <p className="text-sm text-yellow-800">
-                                    <strong>Info:</strong> Fitur import belum tersedia untuk Network Device.
-                                </p>
-                            </div>
+                          
 
                             {/* Modal Actions */}
                             <div className="flex items-center justify-end space-x-3 mt-6">
