@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\CctvController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HpbocController;
 use App\Http\Controllers\NetworkDeviceController;
 use App\Http\Controllers\PcDeviceController;
@@ -13,9 +14,7 @@ use App\Http\Controllers\TelephoneController;
 Route::redirect('/', '/login');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('overview/index');
-    })->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // IT Dashboard Routes - using controllers with auth
     Route::get('network-device', [NetworkDeviceController::class, 'index'])->name('network-device.index');

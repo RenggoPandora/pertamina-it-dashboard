@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { router } from '@inertiajs/react';
 import Sidebar from './Sidebar';
 
 export default function Layout({ children, activeMenuItem, title, subtitle }) {
     const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
     const dropdownRef = useRef(null);
 
     const toggleProfileDropdown = () => {
@@ -24,20 +26,18 @@ export default function Layout({ children, activeMenuItem, title, subtitle }) {
     }, []);
 
     const handleLogout = () => {
-        // Create a form and submit it for logout
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = route('logout');
+        setIsLoggingOut(true);
+        setIsProfileDropdownOpen(false);
         
-        // Add CSRF token
-        const csrfToken = document.createElement('input');
-        csrfToken.type = 'hidden';
-        csrfToken.name = '_token';
-        csrfToken.value = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        form.appendChild(csrfToken);
-        
-        document.body.appendChild(form);
-        form.submit();
+        router.post(route('logout'), {}, {
+            onSuccess: () => {
+                // Redirect akan ditangani oleh Laravel setelah logout
+            },
+            onError: (errors) => {
+                console.error('Logout error:', errors);
+                setIsLoggingOut(false);
+            }
+        });
     };
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -100,8 +100,7 @@ export default function Layout({ children, activeMenuItem, title, subtitle }) {
                                             className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                // Handle account settings navigation
-                                                window.location.href = route('profile.edit');
+                                                router.visit(route('profile.edit'));
                                             }}
                                         >
                                             <svg className="h-4 w-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,12 +112,20 @@ export default function Layout({ children, activeMenuItem, title, subtitle }) {
                                         <hr className="border-gray-200 dark:border-gray-700" />
                                         <button
                                             onClick={handleLogout}
-                                            className="flex items-center w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                                            disabled={isLoggingOut}
+                                            className="flex items-center w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
-                                            <svg className="h-4 w-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                            </svg>
-                                            Logout
+                                            {isLoggingOut ? (
+                                                <svg className="animate-spin h-4 w-4 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                            ) : (
+                                                <svg className="h-4 w-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                                </svg>
+                                            )}
+                                            {isLoggingOut ? 'Signing out...' : 'Logout'}
                                         </button>
                                     </div>
                                 )}
