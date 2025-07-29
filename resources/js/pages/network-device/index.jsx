@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
-import Layout from '@/components/layouts/Layout';
+import Layout from '@/components/Layouts/Layout';
 
 export default function NetworkDevice({ networkDevices, flash }) {
     // Use the data passed from the Laravel controller
@@ -93,56 +93,116 @@ export default function NetworkDevice({ networkDevices, flash }) {
                         </div>
                     </div>
                 )}
-                {/* Stats Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                        <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Devices</h3>
-                        <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{devices.length}</p>
-                        <p className="text-xs text-gray-500">Semua perangkat jaringan</p>
-                    </div>
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                        <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Switches</h3>
-                        <p className="text-3xl font-bold text-blue-600 mt-2">
-                            {devices.filter(d => d.jenis === 'switch').length}
-                        </p>
-                        <p className="text-xs text-gray-500">Network switches</p>
-                    </div>
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                        <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Access Points</h3>
-                        <p className="text-3xl font-bold text-purple-600 mt-2">
-                            {devices.filter(d => d.jenis === 'access point').length}
-                        </p>
-                        <p className="text-xs text-gray-500">WiFi access points</p>
-                    </div>
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                        <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Network</h3>
-                        <p className="text-3xl font-bold text-purple-600 mt-2">
-                            {devices.filter(d => d.jenis === 'network').length}
-                        </p>
-                        <p className="text-xs text-gray-500">Network</p>
-                    </div>
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                        <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Status</h3>
-                        <div className="flex justify-between mt-2">
-                            <div className="flex-1 text-center">
-                                <div className="flex items-center justify-between mb-2">
-                                    <p className="text-2xl font-bold text-green-600">
-                                        {devices.filter(d => d.status === 'up').length}
-                                    </p>
-                                    <img src="icons/up.png" alt="Up" className="w-6 h-6" />
+
+                {/* Stats Grid - 3 Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    {/* Total Devices Card */}
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 h-32">
+                        <div className="flex items-center h-full">
+                            <div className="flex-shrink-0">
+                                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
+                                    <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                                    </svg>
                                 </div>
-                                <p className="text-xs text-gray-500">Up</p>
                             </div>
-                            {/* Pembatas vertikal */}
-                            <div className="w-px h-16 bg-gray-300 dark:bg-gray-600 mx-4"></div>
-                            <div className="flex-1 text-center">
-                                <div className="flex items-center justify-between mb-2">
-                                    <p className="text-2xl font-bold text-red-600">
-                                        {devices.filter(d => d.status === 'down').length}
-                                    </p>
-                                    <img src="icons/down.png" alt="Down" className="w-6 h-6" />
+                            <div className="ml-4 flex-1">
+                                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Devices</h3>
+                                <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{devices.length}</p>
+                                <p className="text-xs text-gray-500 mt-1">Semua perangkat jaringan</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Device Types Card */}
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 h-32">
+                        <div className="flex items-center mb-3">
+                            <div className="flex-shrink-0">
+                                <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center">
+                                    <svg className="w-4 h-4 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14-4l2 2-2 2M5 13l-2-2 2-2" />
+                                    </svg>
                                 </div>
-                                <p className="text-xs text-gray-500">Down</p>
+                            </div>
+                            <div className="ml-3">
+                                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Jenis Perangkat</h3>
+                            </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-3 gap-2 text-center">
+                            {/* Switch */}
+                            <div>
+                                <div className="w-2 h-2 bg-blue-500 rounded-full mx-auto mb-1"></div>
+                                <span className="text-xs text-gray-700 dark:text-gray-300 block">Switches</span>
+                                <span className="text-sm font-semibold text-blue-600 dark:text-blue-400 block">
+                                    {devices.filter(d => d.jenis === 'switch').length}
+                                </span>
+                            </div>
+                            
+                            {/* Access Points */}
+                            <div>
+                                <div className="w-2 h-2 bg-purple-500 rounded-full mx-auto mb-1"></div>
+                                <span className="text-xs text-gray-700 dark:text-gray-300 block">Access Point</span>
+                                <span className="text-sm font-semibold text-purple-600 dark:text-purple-400 block">
+                                    {devices.filter(d => d.jenis === 'access point').length}
+                                </span>
+                            </div>
+                            
+                            {/* Network */}
+                            <div>
+                                <div className="w-2 h-2 bg-indigo-500 rounded-full mx-auto mb-1"></div>
+                                <span className="text-xs text-gray-700 dark:text-gray-300 block">Network</span>
+                                <span className="text-sm font-semibold text-indigo-600 dark:text-indigo-400 block">
+                                    {devices.filter(d => d.jenis === 'network').length}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Status Card */}
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 h-32">
+                        <div className="flex items-center mb-3">
+                            <div className="flex-shrink-0">
+                                <div className="w-8 h-8 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
+                                    <svg className="w-4 h-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div className="ml-3">
+                                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Status Perangkat</h3>
+                            </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-4">
+                            {/* Status Up */}
+                            <div className="text-center">
+                                <div className="flex items-center justify-center mb-1">
+                                    <div className="w-6 h-6 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center mr-1">
+                                        <svg className="w-3 h-3 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <span className="text-lg font-bold text-green-600 dark:text-green-400">
+                                        {devices.filter(d => d.status === 'up').length}
+                                    </span>
+                                </div>
+                                <p className="text-xs text-gray-500">Online</p>
+                            </div>
+                            
+                            {/* Status Down */}
+                            <div className="text-center">
+                                <div className="flex items-center justify-center mb-1">
+                                    <div className="w-6 h-6 bg-red-100 dark:bg-red-900/20 rounded-lg flex items-center justify-center mr-1">
+                                        <svg className="w-3 h-3 text-red-600 dark:text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <span className="text-lg font-bold text-red-600 dark:text-red-400">
+                                        {devices.filter(d => d.status === 'down').length}
+                                    </span>
+                                </div>
+                                <p className="text-xs text-gray-500">Offline</p>
                             </div>
                         </div>
                     </div>
@@ -331,8 +391,6 @@ export default function NetworkDevice({ networkDevices, flash }) {
                                     </div>
                                 )}
                             </div>
-
-                          
 
                             {/* Modal Actions */}
                             <div className="flex items-center justify-end space-x-3 mt-6">
