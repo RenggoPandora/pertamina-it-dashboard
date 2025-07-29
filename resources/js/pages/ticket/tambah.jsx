@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
-import Layout from '@/components/shared/Layout';
+import Layout from '@/components/layouts/Layout';
 
 export default function TambahTicket() {
     const [showInfo, setShowInfo] = useState(false);

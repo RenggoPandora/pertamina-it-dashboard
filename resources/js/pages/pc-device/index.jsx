@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Head, router } from '@inertiajs/react'; // Tambahkan router
-import Layout from '@/components/shared/Layout';
+import Layout from '@/components/layouts/Layout';
 
 export default function PCDevice({ pcDevices = [] }) {
     const [devices, setDevices] = useState(pcDevices);

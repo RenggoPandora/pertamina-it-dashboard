@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
-import Layout from '@/components/shared/Layout';
+import Layout from '@/components/layouts/Layout';
 
 export default function NetworkDevice({ networkDevices, flash }) {
     // Use the data passed from the Laravel controller

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
-import Layout from '@/components/shared/Layout';
+import Layout from '@/components/layouts/Layout';
 import MUIDonutChart from '@/components/charts/MUIDonutChart';
 import MUIBarChart from '@/components/charts/MUIBarChart';
 

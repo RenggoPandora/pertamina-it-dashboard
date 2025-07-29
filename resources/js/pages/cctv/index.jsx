@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Head, usePage, router } from '@inertiajs/react';
-import Layout from '@/components/shared/Layout';
+import Layout from '@/components/layouts/Layout';
 
 export default function CCTV({ cctvs = [] }) {
     // Ubah dari const menjadi let untuk cameras state
