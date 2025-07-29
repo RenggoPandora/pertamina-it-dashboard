@@ -4,20 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\Ticket;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class TicketController extends Controller
 {
     public function index()
     {
         $tickets = Ticket::all();
-        return inertia('Ticket/Index', [
+        return Inertia::render('ticket/index', [
             'tickets' => $tickets
         ]);
     }
 
     public function create()
     {
-        return inertia('Ticket/Create');
+
+        return Inertia::render('ticket/tambah', [
+        ]);
     }
 
     public function store(Request $request)
@@ -35,7 +38,7 @@ class TicketController extends Controller
 
     public function edit(Ticket $ticket)
     {
-        return inertia('Ticket/Edit', [
+        return inertia('ticket/Edit', [
             'ticket' => $ticket
         ]);
     }

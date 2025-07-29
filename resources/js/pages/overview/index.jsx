@@ -47,6 +47,7 @@ export default function Overview({
                             <div className="text-right text-xs opacity-75">
                                 <div>Desktop: {pcDeviceStats?.desktop || 0}</div>
                                 <div>Notebook: {pcDeviceStats?.notebook || 0}</div>
+                                <div>Printer: {pcDeviceStats?.printer || 0}</div>
                             </div>
                         </div>
                     </div>
@@ -376,6 +377,13 @@ export default function Overview({
                                     <span>Access Points</span>
                                 </div>
                                 <span>{networkStats?.accessPoints || 0}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center">
+                                    <div className="w-3 h-3 bg-purple-500 rounded mr-2"></div>
+                                    <span>Network</span>
+                                </div>
+                                <span>{networkStats?.network || 0}</span>
                             </div>
                         </div>
                     </div>

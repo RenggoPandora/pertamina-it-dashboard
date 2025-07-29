@@ -11,6 +11,7 @@ use App\Http\Controllers\PcDeviceController;
 use App\Http\Controllers\RadioController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\TelephoneController;
+use App\Http\Controllers\TicketController;
 
 Route::redirect('/', '/login');
 
@@ -54,6 +55,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     // CCTV resource routes
     Route::resource('cctv', CctvController::class);
+
+    // Ticket resource routes
+    Route::resource('ticket', TicketController::class);
+    Route::get('ticket', [TicketController::class, 'index'])->name('ticket.index');
 });
 
 require __DIR__.'/settings.php';

@@ -115,6 +115,13 @@ export default function NetworkDevice({ networkDevices, flash }) {
                         <p className="text-xs text-gray-500">WiFi access points</p>
                     </div>
                     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                        <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Network</h3>
+                        <p className="text-3xl font-bold text-purple-600 mt-2">
+                            {devices.filter(d => d.jenis === 'network').length}
+                        </p>
+                        <p className="text-xs text-gray-500">Network</p>
+                    </div>
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                         <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Status</h3>
                         <div className="flex justify-between mt-2">
                             <div className="flex-1 text-center">
@@ -211,13 +218,23 @@ export default function NetworkDevice({ networkDevices, flash }) {
                                                     {device.ip_address}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                                        device.jenis === 'switch' 
-                                                            ? 'bg-blue-100 text-blue-800 dark:bg-blue-800/20 dark:text-blue-400'
-                                                            : 'bg-purple-100 text-purple-800 dark:bg-purple-800/20 dark:text-purple-400'
-                                                    }`}>
-                                                        {device.jenis === 'switch' ? 'Switch' : 'Access Point'}
-                                                    </span>
+                                                    {(() => {
+                                                        let label = 'Network';
+                                                        let colorClass = 'bg-purple-100 text-purple-800 dark:bg-purple-800/20 dark:text-purple-400';
+
+                                                        if (device.jenis === 'switch') {
+                                                            label = 'Switch';
+                                                            colorClass = 'bg-blue-100 text-blue-800 dark:bg-blue-800/20 dark:text-blue-400';
+                                                        } else if (device.jenis === 'access point') {
+                                                            label = 'Access Point';
+                                                        }
+
+                                                        return (
+                                                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${colorClass}`}>
+                                                                {label}
+                                                            </span>
+                                                        );
+                                                    })()}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${

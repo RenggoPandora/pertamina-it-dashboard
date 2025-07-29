@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('nama_perangkat');
             $table->string('ip_address');
             $table->date('tanggal_pencatatan');
-            $table->enum('jenis', ['switch', 'access point']);
+            $table->enum('jenis', ['switch', 'access point','network']);
             $table->enum('status', ['up', 'down'])->default('up');
             $table->timestamps();
 

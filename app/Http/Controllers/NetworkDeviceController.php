@@ -28,7 +28,7 @@ class NetworkDeviceController extends Controller
             'nama_perangkat' => 'required|string|max:255',
             'ip_address' => 'required|ipv4',
             'tanggal_pencatatan' => 'required|date',
-            'jenis' => 'required|in:switch,access point',
+            'jenis' => 'required|in:switch,access point,network',
             'status' => 'required|in:up,down',
         ]);
 
@@ -43,7 +43,7 @@ class NetworkDeviceController extends Controller
             'nama_perangkat' => 'required|string|max:255',
             'ip_address' => 'required|ipv4',
             'tanggal_pencatatan' => 'required|date',
-            'jenis' => 'required|in:switch,access point',
+            'jenis' => 'required|in:switch,access point,network',
             'status' => 'required|in:up,down',
         ]);
 

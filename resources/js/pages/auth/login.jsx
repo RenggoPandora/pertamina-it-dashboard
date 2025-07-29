@@ -61,7 +61,7 @@ export default function Login({ status, canResetPassword }) {
                                         required
                                         value={data.email}
                                         onChange={(e) => setData('email', e.target.value)}
-                                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                        className="appearance-none block text-gray-700 w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                         placeholder="Enter your email"
                                     />
                                     {errors.email && (
@@ -84,7 +84,7 @@ export default function Login({ status, canResetPassword }) {
                                         required
                                         value={data.password}
                                         onChange={(e) => setData('password', e.target.value)}
-                                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                        className="appearance-none text-gray-700 block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                         placeholder="Enter your password"
                                     />
                                     {errors.password && (

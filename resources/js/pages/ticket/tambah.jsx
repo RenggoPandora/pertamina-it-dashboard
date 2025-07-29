@@ -2,41 +2,34 @@ import React, { useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import Layout from '@/components/shared/Layout';
 
-export default function TambahNetworkDevice() {
+export default function TambahTicket() {
     const [showInfo, setShowInfo] = useState(false);
-    
+
     const { data, setData, post, processing, errors, reset } = useForm({
-        nama_perangkat: '',
-        ip_address: '',
-        tanggal_pencatatan: '',
-        jenis: 'switch',
-        status: 'up',
+        support_company: '',
+        req_number: '',
+        status: 'pending',
     });
 
     const submit = (e) => {
         e.preventDefault();
-        post(route('networkdevice.store'), {
-            onSuccess: () => {
-                reset();
-            },
-            onError: () => {
-                // Error handling is done automatically by Inertia
-            },
+        post(route('ticket.store'), {
+            onSuccess: () => reset(),
         });
     };
 
     return (
         <>
-            <Head title="Tambah Network Device - Pertamina IT Dashboard" />
-            <Layout 
-                activeMenuItem="Network Device" 
-                title="Tambah Network Device"
-                subtitle="Menambahkan perangkat jaringan baru"
+            <Head title="Tambah Ticket - Pertamina IT Dashboard" />
+            <Layout
+                activeMenuItem="Ticket"
+                title="Tambah Ticket"
+                subtitle="Menambahkan ticket support/service request baru"
             >
                 {/* Back Button */}
                 <div className="mb-6">
                     <a
-                        href={route('networkdevice.index')}
+                        href={route('ticket.index')}
                         className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
                     >
                         <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -50,8 +43,8 @@ export default function TambahNetworkDevice() {
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                     <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                         <div>
-                            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Formulir Tambah Network Device</h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">Isi semua informasi yang diperlukan untuk menambahkan perangkat jaringan baru</p>
+                            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Formulir Tambah Ticket</h3>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Isi semua informasi yang diperlukan untuk menambahkan ticket baru</p>
                         </div>
                         {/* Info Button */}
                         <div className="relative">
@@ -64,10 +57,8 @@ export default function TambahNetworkDevice() {
                                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
                                 </svg>
                             </button>
-                            
-                            {/* Information Tooltip */}
                             {showInfo && (
-                                <div className="absolute right-0 top-10 w-80 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 transform animate-in slide-in-from-right-2">
+                                <div className="absolute right-0 top-10 w-80 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
                                     <div className="p-4">
                                         <div className="flex items-start">
                                             <div className="flex-shrink-0">
@@ -91,97 +82,56 @@ export default function TambahNetworkDevice() {
                                                 </div>
                                                 <div className="text-sm text-gray-600 dark:text-gray-300">
                                                     <ul className="list-disc list-inside space-y-1">
-                                                        <li>Pastikan semua data yang diisi sudah benar sebelum menyimpan</li>
-                                                        <li>Nama perangkat Network Device harus unik dan mudah diidentifikasi</li>
-                                                        <li>IP Address harus valid dan tidak bentrok dengan perangkat lain</li>
-                                                        <li>Status perangkat dapat diubah sewaktu-waktu setelah disimpan</li>
+                                                        <li>Pastikan data ticket sudah benar sebelum disimpan</li>
+                                                        <li>Nomor request harus unik dan valid</li>
+                                                        <li>Status ticket dapat diubah setelah pembuatan</li>
                                                     </ul>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    {/* Arrow pointing to button */}
                                     <div className="absolute top-2 -right-2 w-4 h-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 transform rotate-45 border-l-0 border-b-0"></div>
                                 </div>
                             )}
                         </div>
                     </div>
-                    
+
                     <form onSubmit={submit} className="p-6 space-y-6">
-                        {/* Nama Perangkat */}
+                        {/* Support Company */}
                         <div>
-                            <label htmlFor="nama_perangkat" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Nama Perangkat <span className="text-red-500">*</span>
+                            <label htmlFor="support_company" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Support Company <span className="text-red-500">*</span>
                             </label>
                             <input
-                                id="nama_perangkat"
+                                id="support_company"
                                 type="text"
-                                value={data.nama_perangkat}
-                                onChange={(e) => setData('nama_perangkat', e.target.value)}
+                                value={data.support_company}
+                                onChange={(e) => setData('support_company', e.target.value)}
                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                                placeholder="Masukkan nama perangkat Network Device"
+                                placeholder="Masukkan nama perusahaan support"
                                 required
                             />
-                            {errors.nama_perangkat && (
-                                <p className="mt-1 text-sm text-red-600">{errors.nama_perangkat}</p>
+                            {errors.support_company && (
+                                <p className="mt-1 text-sm text-red-600">{errors.support_company}</p>
                             )}
                         </div>
 
-                        {/* IP Address */}
+                        {/* Request Number */}
                         <div>
-                            <label htmlFor="ip_address" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                IP Address <span className="text-red-500">*</span>
+                            <label htmlFor="req_number" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Nomor Request <span className="text-red-500">*</span>
                             </label>
                             <input
-                                id="ip_address"
+                                id="req_number"
                                 type="text"
-                                value={data.ip_address}
-                                onChange={(e) => setData('ip_address', e.target.value)}
+                                value={data.req_number}
+                                onChange={(e) => setData('req_number', e.target.value)}
                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                                placeholder="contoh: 192.168.100.11"
+                                placeholder="Masukkan nomor request"
                                 required
                             />
-                            {errors.ip_address && (
-                                <p className="mt-1 text-sm text-red-600">{errors.ip_address}</p>
-                            )}
-                        </div>
-
-                        {/* Tanggal Pencatatan */}
-                        <div>
-                            <label htmlFor="tanggal_pencatatan" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Tanggal Pencatatan <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                id="tanggal_pencatatan"
-                                type="date"
-                                value={data.tanggal_pencatatan}
-                                onChange={(e) => setData('tanggal_pencatatan', e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                                required
-                            />
-                            {errors.tanggal_pencatatan && (
-                                <p className="mt-1 text-sm text-red-600">{errors.tanggal_pencatatan}</p>
-                            )}
-                        </div>
-
-                        {/* Jenis */}
-                        <div>
-                            <label htmlFor="jenis" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Jenis Perangkat <span className="text-red-500">*</span>
-                            </label>
-                            <select
-                                id="jenis"
-                                value={data.jenis}
-                                onChange={(e) => setData('jenis', e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                                required
-                            >
-                                <option value="switch">Switch</option>
-                                <option value="access point">Access Point</option>
-                                <option value="network">Network</option>
-                            </select>
-                            {errors.jenis && (
-                                <p className="mt-1 text-sm text-red-600">{errors.jenis}</p>
+                            {errors.req_number && (
+                                <p className="mt-1 text-sm text-red-600">{errors.req_number}</p>
                             )}
                         </div>
 
@@ -197,8 +147,11 @@ export default function TambahNetworkDevice() {
                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                                 required
                             >
-                                <option value="up">Up (Aktif)</option>
-                                <option value="down">Down (Tidak Aktif)</option>
+                                <option value="closed">Closed</option>
+                                <option value="completed">Completed</option>
+                                <option value="pending">Pending</option>
+                                <option value="rejected">Rejected</option>
+                                <option value="resolved">Resolved</option>
                             </select>
                             {errors.status && (
                                 <p className="mt-1 text-sm text-red-600">{errors.status}</p>
@@ -208,7 +161,7 @@ export default function TambahNetworkDevice() {
                         {/* Submit Buttons */}
                         <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-700">
                             <a
-                                href={route('networkdevice.index')}
+                                href={route('ticket.index')}
                                 className="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                             >
                                 Batal
@@ -227,7 +180,7 @@ export default function TambahNetworkDevice() {
                                         Menyimpan...
                                     </div>
                                 ) : (
-                                    'Simpan Network Device'
+                                    'Simpan Ticket'
                                 )}
                             </button>
                         </div>

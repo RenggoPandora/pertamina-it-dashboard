@@ -64,6 +64,7 @@ class DashboardController extends Controller
             'down' => $networkDevices->where('status', 'down')->count(),
             'switches' => $networkDevices->where('jenis', 'switch')->count(),
             'accessPoints' => $networkDevices->where('jenis', 'access point')->count(),
+            'network' => $networkDevices->where('jenis', 'network')->count(),
         ];
 
         // Calculate statistics for CCTV
