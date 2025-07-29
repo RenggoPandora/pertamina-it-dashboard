@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
-import { Head } from '@inertiajs/react';
+import { Head, usePage, router } from '@inertiajs/react';
 import Layout from '@/components/shared/Layout';
 
 export default function CCTV({ cctvs = [] }) {
-    const [cameras] = useState(cctvs);
+    // Ubah dari const menjadi let untuk cameras state
+    const [cameras, setCameras] = useState(cctvs);
     
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [uploadedFile, setUploadedFile] = useState(null);
     const [processing, setProcessing] = useState(false);
+
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selectedCctv, setSelectedCctv] = useState(null);
 
     const openUploadModal = () => {
         setShowUploadModal(true);
@@ -48,6 +52,11 @@ export default function CCTV({ cctvs = [] }) {
                 alert('Import belum tersedia untuk CCTV');
             }, 2000);
         }
+    };
+
+    const openDeleteModal = (cctv) => {
+        setSelectedCctv(cctv);
+        setShowDeleteModal(true);
     };
 
     return (
@@ -198,10 +207,16 @@ export default function CCTV({ cctvs = [] }) {
                                                     {new Date(camera.tanggal_pencatatan).toLocaleDateString()}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                    <button className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-3">
+                                                    <a 
+                                                        href={route('cctv.edit', camera.id)}
+                                                        className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-3"
+                                                    >
                                                         Ubah
-                                                    </button>
-                                                    <button className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">
+                                                    </a>
+                                                    <button
+                                                        onClick={() => openDeleteModal(camera)}
+                                                        className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                                                    >
                                                         Hapus
                                                     </button>
                                                 </td>
@@ -303,6 +318,63 @@ export default function CCTV({ cctvs = [] }) {
                                 >
                                     {processing ? 'Processing...' : 'Confirm'}
                                 </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Delete Confirmation Modal */}
+                {showDeleteModal && selectedCctv && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center">
+                        <div className="fixed inset-0 bg-black opacity-50" onClick={() => setShowDeleteModal(false)}></div>
+                        <div className="bg-white rounded-lg shadow-lg z-50 max-w-md w-full p-6">
+                            <div className="flex items-center space-x-4">
+                                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-red-100">
+                                    <svg className="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 className="text-lg font-semibold text-gray-900">Hapus CCTV</h2>
+                                    <p className="text-sm text-gray-600 mt-1">
+                                        Apakah Anda yakin ingin menghapus CCTV <strong>{selectedCctv.nama_perangkat}</strong>? 
+                                        <br />
+                                        IP Address: <code className="text-sm bg-gray-100 px-1 py-0.5 rounded">{selectedCctv.ip_address}</code>
+                                        <br />
+                                        Tindakan ini tidak dapat dibatalkan.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="mt-6 flex justify-end space-x-2">
+                                <button
+                                    onClick={() => {
+                                        setShowDeleteModal(false);
+                                        setSelectedCctv(null);
+                                    }}
+                                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+                                >
+                                    Batal
+                                </button>
+                                <form onSubmit={(e) => {
+                                    e.preventDefault();
+                                    router.delete(route('cctv.destroy', selectedCctv.id), {
+                                        preserveScroll: true,
+                                        onSuccess: () => {
+                                            // Update local state setelah penghapusan berhasil
+                                            setCameras(cameras.filter(camera => camera.id !== selectedCctv.id));
+                                            setShowDeleteModal(false);
+                                            setSelectedCctv(null);
+                                        },
+                                    });
+                                }}>
+                                    <button
+                                        type="submit"
+                                        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                                    >
+                                        Hapus
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
