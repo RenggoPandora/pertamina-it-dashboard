@@ -4,15 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\NetworkDevice;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class NetworkDeviceController extends Controller
 {
     public function index()
     {
         $networkDevices = NetworkDevice::all();
-        return inertia('NetworkDevice/Index', [
+        
+        return Inertia::render('network-device/index', [
             'networkDevices' => $networkDevices,
         ]);
+    }
+
+    public function create()
+    {
+        return Inertia::render('network-device/tambah');
     }
 
     public function store(Request $request)
@@ -27,7 +34,7 @@ class NetworkDeviceController extends Controller
 
         NetworkDevice::create($validated);
 
-        return redirect()->back()->with('success', 'Perangkat jaringan berhasil ditambahkan.');
+        return redirect()->route('networkdevice.index')->with('success', 'Perangkat jaringan berhasil ditambahkan.');
     }
 
     public function update(Request $request, NetworkDevice $networkDevice)

@@ -11,7 +11,7 @@ class Site extends Model
 
     protected $fillable = ['lokasi'];
 
-    public function hpbocs()
+    public function hpboc()
     {
         return $this->hasMany(Hpboc::class);
     }

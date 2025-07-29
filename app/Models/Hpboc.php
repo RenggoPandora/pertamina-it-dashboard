@@ -9,6 +9,9 @@ class Hpboc extends Model
 {
     use HasFactory;
 
+    // Specify the table name explicitly
+    protected $table = 'hpboc';
+
     protected $fillable = [
         'nama_perangkat',
         'jumlah',

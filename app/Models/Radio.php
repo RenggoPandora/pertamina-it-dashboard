@@ -12,6 +12,8 @@ class Radio extends Model
     protected $table = 'radio';
 
     protected $fillable = [
+        'nama_perangkat',
+        'jumlah',
         'tanggal_pencatatan',
         'status',
         'site_id',

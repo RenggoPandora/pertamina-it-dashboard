@@ -21,5 +21,6 @@ class PcDevice extends Model
 
     protected $casts = [
         'tanggal_pencatatan' => 'date',
+        'jumlah' => 'integer',
     ];
 }
