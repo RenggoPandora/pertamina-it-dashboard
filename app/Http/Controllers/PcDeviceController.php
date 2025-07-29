@@ -47,23 +47,24 @@ class PcDeviceController extends Controller
     public function edit(PcDevice $pcDevice)
     {
         return Inertia::render('pc-device/edit', [
-            'pcDevice' => $pcDevice,
+            'pcDevice' => $pcDevice
         ]);
     }
 
-    public function update(Request $request, PcDevice $pcDevice)
+    public function update(Request $request, PcDevice $pcDevice) 
     {
         $validated = $request->validate([
-            'jenis' => 'required|in:desktop,notebook,printer',
             'nama_perangkat' => 'required|string|max:255',
+            'jenis' => 'required|in:desktop,notebook,printer',
             'jumlah' => 'required|integer|min:1',
-            'tanggal_pencatatan' => 'required|date',
             'alokasi' => 'required|in:MPS,SM5',
+            'tanggal_pencatatan' => 'required|date',
         ]);
 
         $pcDevice->update($validated);
 
-        return redirect()->route('pcdevice.index')->with('success', 'PC Device berhasil diperbarui.');
+        return redirect()->route('pcdevice.index')
+            ->with('success', 'PC Device berhasil diperbarui.');
     }
 
     public function destroy(PcDevice $pcDevice)

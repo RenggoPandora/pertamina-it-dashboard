@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react'; // Tambahkan router
 import Layout from '@/components/shared/Layout';
 
 export default function PCDevice({ pcDevices = [] }) {
-    const [devices] = useState(pcDevices);
-    
+    const [devices, setDevices] = useState(pcDevices);
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [uploadedFile, setUploadedFile] = useState(null);
     const [processing, setProcessing] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selectedDevice, setSelectedDevice] = useState(null);
 
     const openUploadModal = () => {
         setShowUploadModal(true);
@@ -48,6 +49,30 @@ export default function PCDevice({ pcDevices = [] }) {
                 alert('Import belum tersedia untuk PC Device');
             }, 2000);
         }
+    };
+
+    const openDeleteModal = (device) => {
+        setSelectedDevice(device);
+        setShowDeleteModal(true);
+    };
+
+    const handleDelete = () => {
+        if (!selectedDevice) return;
+
+        router.delete(route('pcdevice.destroy', selectedDevice.id), {
+            onSuccess: () => {
+                // Refresh halaman setelah hapus berhasil
+                router.visit(route('pcdevice.index'), {
+                    preserveScroll: true,
+                });
+                setShowDeleteModal(false);
+                setSelectedDevice(null);
+            },
+            onError: (errors) => {
+                console.error('Delete failed:', errors);
+                alert('Gagal menghapus data');
+            }
+        });
     };
 
     return (
@@ -207,10 +232,16 @@ export default function PCDevice({ pcDevices = [] }) {
                                                     {new Date(device.tanggal_pencatatan).toLocaleDateString()}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                    <button className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-3">
+                                                    <a 
+                                                        href={route('pcdevice.edit', device.id)}
+                                                        className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-3"
+                                                    >
                                                         Ubah
-                                                    </button>
-                                                    <button className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">
+                                                    </a>
+                                                    <button
+                                                        onClick={() => openDeleteModal(device)}
+                                                        className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                                                    >
                                                         Hapus
                                                     </button>
                                                 </td>
@@ -304,6 +335,52 @@ export default function PCDevice({ pcDevices = [] }) {
                                     className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                 >
                                     {processing ? 'Processing...' : 'Confirm'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                
+                {/* Delete Confirmation Modal */}
+                {showDeleteModal && selectedDevice && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center">
+                        <div className="fixed inset-0 bg-black opacity-50" onClick={() => setShowDeleteModal(false)}></div>
+                        <div className="bg-white rounded-lg shadow-lg z-50 max-w-md w-full p-6">
+                            <div className="flex items-center space-x-4">
+                                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-red-100">
+                                    <svg className="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 className="text-lg font-semibold text-gray-900">Hapus PC Device</h2>
+                                    <p className="text-sm text-gray-600 mt-1">
+                                        Apakah Anda yakin ingin menghapus {selectedDevice.nama_perangkat}? 
+                                        <br />
+                                        Jenis: <span className="font-medium">{selectedDevice.jenis}</span>
+                                        <br />
+                                        Jumlah: <span className="font-medium">{selectedDevice.jumlah}</span>
+                                        <br />
+                                        Tindakan ini tidak dapat dibatalkan.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="mt-6 flex justify-end space-x-2">
+                                <button
+                                    onClick={() => {
+                                        setShowDeleteModal(false);
+                                        setSelectedDevice(null);
+                                    }}
+                                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+                                >
+                                    Batal
+                                </button>
+                                <button
+                                    onClick={handleDelete}
+                                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                                >
+                                    Hapus
                                 </button>
                             </div>
                         </div>
