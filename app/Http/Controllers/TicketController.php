@@ -38,7 +38,7 @@ class TicketController extends Controller
 
     public function edit(Ticket $ticket)
     {
-        return inertia('ticket/Edit', [
+        return Inertia::render('ticket/edit', [
             'ticket' => $ticket
         ]);
     }
