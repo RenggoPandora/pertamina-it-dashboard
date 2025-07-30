@@ -67,10 +67,17 @@ class PcDeviceController extends Controller
             ->with('success', 'PC Device berhasil diperbarui.');
     }
 
-    public function destroy(PcDevice $pcDevice)
-    {
-        $pcDevice->delete();
+    public function destroy($id)
+{
+    $pcDevice = PcDevice::find($id);
 
-        return redirect()->route('pcdevice.index')->with('success', 'PC Device berhasil dihapus.');
+    if (!$pcDevice) {
+        \Log::error('PC device not found', ['id' => $id]);
+        return response()->json(['message' => 'PC Device not found'], 404);
     }
+
+    $pcDevice->delete();
+    return redirect()->back()->with('success', 'PC Device berhasil dihapus.');
+}
+
 }

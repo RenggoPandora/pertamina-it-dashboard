@@ -49,6 +49,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     // Network Device resource routes
     Route::resource('networkdevice', NetworkDeviceController::class);
+    Route::delete('/networkdevice/{networkDevice}', [NetworkDeviceController::class, 'destroy'])->name('networkdevice.destroy');
+
     
     // PC Device resource routes
     Route::resource('pcdevice', PcDeviceController::class);

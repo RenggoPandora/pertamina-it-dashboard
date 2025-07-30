@@ -52,10 +52,16 @@ class NetworkDeviceController extends Controller
         return redirect()->back()->with('success', 'Data berhasil diperbarui.');
     }
 
-    public function destroy(NetworkDevice $networkDevice)
-    {
-        $networkDevice->delete();
+    public function destroy($id)
+{
+    $networkDevice = NetworkDevice::find($id);
 
-        return redirect()->back()->with('success', 'Data berhasil dihapus.');
+    if (!$networkDevice) {
+        \Log::error('Network device not found', ['id' => $id]);
+        return response()->json(['message' => 'Device not found'], 404);
     }
+
+    $networkDevice->delete();
+    return redirect()->back()->with('success', 'Data berhasil dihapus.');
+}
 }
