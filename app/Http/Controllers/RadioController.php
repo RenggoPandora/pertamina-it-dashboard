@@ -62,11 +62,30 @@ class RadioController extends Controller
         return redirect()->route('radio.index')->with('success', 'Data radio berhasil diperbarui.');
     }
 
-    public function destroy(Radio $radio)
+    public function destroy($id)
     {
-        $radio->delete();
+        try {
+            $radio = Radio::find($id);
 
-        return redirect()->route('radio.index')->with('success', 'Data Radio HT berhasil dihapus.');
+            if (!$radio) {
+                \Log::error('Radio not found', ['id' => $id]);
+                return response()->json(['message' => 'Radio not found'], 404);
+            }
+
+            $radio->delete();
+            return redirect()->back()->with('success', 'Data berhasil dihapus.');
+            
+        } catch (\Exception $e) {
+            \Log::error('Error deleting radio:', [
+                'error' => $e->getMessage(),
+                'radio_id' => $id
+            ]);
+            
+            return response()->json([
+                'message' => 'Error deleting radio',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function import(Request $request)
