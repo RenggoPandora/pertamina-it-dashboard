@@ -216,7 +216,7 @@ export default function PCDevice({ pcDevices = [] }) {
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                                                     <span className="font-medium text-sm text-gray-600 dark:text-white">
-\                                                        {device.jumlah}
+                                                        {device.jumlah}
                                                     </span>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">

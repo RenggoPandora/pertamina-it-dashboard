@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import Layout from '@/components/layouts/Layout';
 
-export default function EditTicket({ ticket }) {
+export default function EditTelephone({ telephone, sites }) {
     const [showInfo, setShowInfo] = useState(false);
 
     // Format date function to convert ISO date to YYYY-MM-DD
@@ -13,28 +13,30 @@ export default function EditTicket({ ticket }) {
     };
 
     const { data, setData, put, processing, errors } = useForm({
-        support_company: ticket.support_company,
-        req_number: ticket.req_number,
-        status: ticket.status,
+        nama_pic: telephone.nama_pic || '',
+        jumlah: telephone.jumlah || '',
+        tanggal_pencatatan: formatDateForInput(telephone.tanggal_pencatatan) || '',
+        status: telephone.status || '',
+        site_id: telephone.site_id || '',
     });
 
     const submit = (e) => {
         e.preventDefault();
-        put(route('ticket.update', ticket.id));
+        put(route('telephone.update', telephone.id));
     };
 
     return (
         <>
-            <Head title="Edit Ticket - Pertamina IT Dashboard" />
+            <Head title="Edit Telephone - Pertamina IT Dashboard" />
             <Layout
-                activeMenuItem="Ticket"
-                title="Edit Ticket"
-                subtitle="Mengubah informasi ticket support/service request"
+                activeMenuItem="Telephone"
+                title="Edit Telephone"
+                subtitle="Mengubah informasi perangkat telepon"
             >
                 {/* Back Button */}
                 <div className="mb-6">
                     <a
-                        href={route('ticket.index')}
+                        href={route('telephone.index')}
                         className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
                     >
                         <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -48,8 +50,8 @@ export default function EditTicket({ ticket }) {
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                     <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                         <div>
-                            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Edit Ticket</h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">Ubah informasi ticket sesuai kebutuhan</p>
+                            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Edit Telephone</h3>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Ubah informasi Telephone sesuai kebutuhan</p>
                         </div>
                         
                         {/* Info Button */}
@@ -78,9 +80,10 @@ export default function EditTicket({ ticket }) {
                                                 </h3>
                                                 <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                                                     <ul className="list-disc list-inside space-y-1">
-                                                        <li>Pastikan semua perubahan data sudah benar</li>
-                                                        <li>Nomor request harus tetap unik</li>
-                                                        <li>Status dapat diubah sesuai kondisi terkini</li>
+                                                        <li>Nama PIC harus diisi dengan lengkap</li>
+                                                        <li>Jumlah harus berupa angka positif</li>
+                                                        <li>Pilih site sesuai lokasi perangkat</li>
+                                                        <li>Status menunjukkan kondisi perangkat</li>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -92,41 +95,60 @@ export default function EditTicket({ ticket }) {
                     </div>
 
                     <form onSubmit={submit} className="p-6 space-y-6">
-                        {/* Support Company */}
+                        {/* Nama PIC */}
                         <div>
-                            <label htmlFor="support_company" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Support Company <span className="text-red-500">*</span>
+                            <label htmlFor="nama_pic" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Nama PIC <span className="text-red-500">*</span>
                             </label>
                             <input
-                                id="support_company"
                                 type="text"
-                                value={data.support_company}
-                                onChange={(e) => setData('support_company', e.target.value)}
+                                id="nama_pic"
+                                value={data.nama_pic}
+                                onChange={e => setData('nama_pic', e.target.value)}
                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                                placeholder="Masukkan nama perusahaan support"
+                                placeholder="Masukkan nama PIC"
                                 required
                             />
-                            {errors.support_company && (
-                                <p className="mt-1 text-sm text-red-600">{errors.support_company}</p>
+                            {errors.nama_pic && (
+                                <p className="mt-1 text-sm text-red-600">{errors.nama_pic}</p>
                             )}
                         </div>
 
-                        {/* Request Number */}
+                        {/* Jumlah */}
                         <div>
-                            <label htmlFor="req_number" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Nomor Request <span className="text-red-500">*</span>
+                            <label htmlFor="jumlah" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Jumlah <span className="text-red-500">*</span>
                             </label>
                             <input
-                                id="req_number"
-                                type="text"
-                                value={data.req_number}
-                                onChange={(e) => setData('req_number', e.target.value)}
+                                type="number"
+                                id="jumlah"
+                                min="1"
+                                value={data.jumlah}
+                                onChange={e => setData('jumlah', e.target.value)}
                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                                placeholder="Masukkan nomor request"
+                                placeholder="Masukkan jumlah telepon"
                                 required
                             />
-                            {errors.req_number && (
-                                <p className="mt-1 text-sm text-red-600">{errors.req_number}</p>
+                            {errors.jumlah && (
+                                <p className="mt-1 text-sm text-red-600">{errors.jumlah}</p>
+                            )}
+                        </div>
+
+                        {/* Tanggal Pencatatan */}
+                        <div>
+                            <label htmlFor="tanggal_pencatatan" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Tanggal Pencatatan <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                                type="date"
+                                id="tanggal_pencatatan"
+                                value={data.tanggal_pencatatan}
+                                onChange={e => setData('tanggal_pencatatan', e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                required
+                            />
+                            {errors.tanggal_pencatatan && (
+                                <p className="mt-1 text-sm text-red-600">{errors.tanggal_pencatatan}</p>
                             )}
                         </div>
 
@@ -138,25 +160,47 @@ export default function EditTicket({ ticket }) {
                             <select
                                 id="status"
                                 value={data.status}
-                                onChange={(e) => setData('status', e.target.value)}
+                                onChange={e => setData('status', e.target.value)}
                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                                 required
                             >
-                                <option value="closed">Closed</option>
-                                <option value="completed">Completed</option>
-                                <option value="pending">Pending</option>
-                                <option value="rejected">Rejected</option>
-                                <option value="resolved">Resolved</option>
+                                <option value="">Pilih status</option>
+                                <option value="on">On</option>
+                                <option value="off">Off</option>
                             </select>
                             {errors.status && (
                                 <p className="mt-1 text-sm text-red-600">{errors.status}</p>
                             )}
                         </div>
 
-                        {/* Submit Buttons */}
+                        {/* Site */}
+                        <div>
+                            <label htmlFor="site_id" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Lokasi Penggunaan <span className="text-red-500">*</span>
+                            </label>
+                            <select
+                                id="site_id"
+                                value={data.site_id}
+                                onChange={e => setData('site_id', e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                required
+                            >
+                                <option value="">Pilih Lokasi Site</option>
+                                {sites && sites.map((site) => (
+                                    <option key={site.id} value={site.id}>
+                                        {site.lokasi}
+                                    </option>
+                                ))}
+                            </select>
+                            {errors.site_id && (
+                                <p className="mt-1 text-sm text-red-600">{errors.site_id}</p>
+                            )}
+                        </div>
+
+                        {/* Form Actions */}
                         <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-700">
                             <a
-                                href={route('ticket.index')}
+                                href={route('telephone.index')}
                                 className="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                             >
                                 Batal
