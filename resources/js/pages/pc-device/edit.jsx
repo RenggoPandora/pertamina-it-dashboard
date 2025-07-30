@@ -1,37 +1,21 @@
 import React, { useState } from 'react';
-import { Head, useForm, router } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import Layout from '@/components/layouts/Layout';
 
-export default function EditPCDevice({ pcDevice, flash }) {
+export default function EditPCDevice({ pcDevice }) {
     const [showInfo, setShowInfo] = useState(false);
-
-    // Format tanggal untuk input date (YYYY-MM-DD)
-    const formatDateForInput = (dateString) => {
-        if (!dateString) return '';
-        const date = new Date(dateString);
-        return date.toISOString().split('T')[0];
-    };
 
     const { data, setData, put, processing, errors } = useForm({
         nama_perangkat: pcDevice.nama_perangkat || '',
-        jenis: pcDevice.jenis || 'desktop',
+        jenis: pcDevice.jenis || '',
         jumlah: pcDevice.jumlah || '',
-        alokasi: pcDevice.alokasi || 'MPS',
-        tanggal_pencatatan: formatDateForInput(pcDevice.tanggal_pencatatan) || '',
+        alokasi: pcDevice.alokasi || '',
+        tanggal_pencatatan: pcDevice.tanggal_pencatatan || '',
     });
 
     const submit = (e) => {
         e.preventDefault();
-        put(route('pcdevice.update', pcDevice.id), {
-            preserveScroll: true,
-            onSuccess: () => {
-                // Redirect langsung ke index tanpa router.visit tambahan
-                console.log('Update berhasil');
-            },
-            onError: (errors) => {
-                console.log('Update errors:', errors);
-            }
-        });
+        put(route('pcdevice.update', pcDevice.id));
     };
 
     return (
@@ -40,43 +24,8 @@ export default function EditPCDevice({ pcDevice, flash }) {
             <Layout
                 activeMenuItem="PC Device"
                 title="Edit PC Device"
-                subtitle="Mengubah informasi perangkat komputer"
+                subtitle="Mengubah informasi perangkat komputer dan workstation"
             >
-                {/* Flash Messages */}
-                {flash?.success && (
-                    <div className="mb-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
-                        <div className="flex">
-                            <div className="flex-shrink-0">
-                                <svg className="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                </svg>
-                            </div>
-                            <div className="ml-3">
-                                <p className="text-sm font-medium text-green-800 dark:text-green-200">
-                                    {flash.success}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {flash?.error && (
-                    <div className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-                        <div className="flex">
-                            <div className="flex-shrink-0">
-                                <svg className="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                                </svg>
-                            </div>
-                            <div className="ml-3">
-                                <p className="text-sm font-medium text-red-800 dark:text-red-200">
-                                    {flash.error}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
                 {/* Back Button */}
                 <div className="mb-6">
                     <a
@@ -95,7 +44,7 @@ export default function EditPCDevice({ pcDevice, flash }) {
                     <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                         <div>
                             <h3 className="text-lg font-medium text-gray-900 dark:text-white">Edit PC Device</h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">Ubah informasi perangkat sesuai kebutuhan</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Ubah informasi PC Device sesuai kebutuhan</p>
                         </div>
                         
                         {/* Info Button */}
@@ -106,7 +55,7 @@ export default function EditPCDevice({ pcDevice, flash }) {
                                 className="flex items-center justify-center w-8 h-8 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                             >
                                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
                                 </svg>
                             </button>
                             {showInfo && (
@@ -124,9 +73,10 @@ export default function EditPCDevice({ pcDevice, flash }) {
                                                 </h3>
                                                 <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                                                     <ul className="list-disc list-inside space-y-1">
-                                                        <li>Jenis perangkat menentukan kategori</li>
-                                                        <li>Jumlah harus lebih dari 0</li>
-                                                        <li>Alokasi menentukan penempatan perangkat</li>
+                                                        <li>Nama perangkat harus unik dan deskriptif</li>
+                                                        <li>Pilih jenis perangkat sesuai kategori yang tersedia</li>
+                                                        <li>Jumlah harus berupa angka positif</li>
+                                                        <li>Alokasi menentukan unit penempatan perangkat</li>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -157,7 +107,7 @@ export default function EditPCDevice({ pcDevice, flash }) {
                             )}
                         </div>
 
-                        {/* Jenis */}
+                        {/* Jenis Perangkat */}
                         <div>
                             <label htmlFor="jenis" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Jenis Perangkat <span className="text-red-500">*</span>
@@ -169,6 +119,7 @@ export default function EditPCDevice({ pcDevice, flash }) {
                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                                 required
                             >
+                                <option value="">Pilih jenis perangkat</option>
                                 <option value="desktop">Desktop</option>
                                 <option value="notebook">Notebook</option>
                                 <option value="printer">Printer</option>
@@ -186,11 +137,11 @@ export default function EditPCDevice({ pcDevice, flash }) {
                             <input
                                 type="number"
                                 id="jumlah"
+                                min="1"
                                 value={data.jumlah}
                                 onChange={e => setData('jumlah', e.target.value)}
                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                                placeholder="Masukkan jumlah unit"
-                                min="1"
+                                placeholder="Masukkan jumlah perangkat"
                                 required
                             />
                             {errors.jumlah && (
@@ -210,6 +161,7 @@ export default function EditPCDevice({ pcDevice, flash }) {
                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                                 required
                             >
+                                <option value="">Pilih alokasi</option>
                                 <option value="MPS">MPS</option>
                                 <option value="SM5">SM5</option>
                             </select>

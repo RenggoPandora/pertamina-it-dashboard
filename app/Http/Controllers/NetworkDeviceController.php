@@ -37,6 +37,31 @@ class NetworkDeviceController extends Controller
         return redirect()->route('networkdevice.index')->with('success', 'Perangkat jaringan berhasil ditambahkan.');
     }
 
+    public function edit($id)
+    {
+        try {
+            $networkDevice = NetworkDevice::find($id);
+            
+            if (!$networkDevice) {
+                return redirect()->route('networkdevice.index')
+                    ->with('error', 'Network Device tidak ditemukan.');
+            }
+
+            return Inertia::render('network-device/edit', [
+                'networkDevice' => $networkDevice
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('Error loading Network Device edit page:', [
+                'id' => $id,
+                'error' => $e->getMessage()
+            ]);
+            
+            return redirect()->route('networkdevice.index')
+                ->with('error', 'Terjadi kesalahan saat memuat data.');
+        }
+    }
+
     public function update(Request $request, NetworkDevice $networkDevice)
     {
         $validated = $request->validate([

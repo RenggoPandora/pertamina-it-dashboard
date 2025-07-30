@@ -350,9 +350,12 @@ export default function NetworkDevice({ networkDevices, flash }) {
                                                     {new Date(device.tanggal_pencatatan).toLocaleDateString()}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                    <button className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-3">
+                                                    <a
+                                                        href={route('networkdevice.edit', device.id)}
+                                                        className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-3"
+                                                    >
                                                         Ubah
-                                                    </button>
+                                                    </a>
                                                     <button
                                                         onClick={() => openDeleteModal(device)}
                                                         className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"

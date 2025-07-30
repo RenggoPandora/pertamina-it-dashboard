@@ -54,6 +54,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     // PC Device resource routes
     Route::resource('pcdevice', PcDeviceController::class);
+    Route::put('/pcdevice/{id}', [PcDeviceController::class, 'update'])->name('pcdevice.update');
+
     
     // CCTV resource routes
     Route::resource('cctv', CctvController::class);
