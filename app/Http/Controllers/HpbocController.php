@@ -60,10 +60,30 @@ class HpbocController extends Controller
         return redirect()->route('hpboc.index')->with('success', 'Data HP BOC berhasil diperbarui.');
     }
 
-    public function destroy(Hpboc $hpboc)
+    public function destroy($id)
     {
-        $hpboc->delete();
-        return redirect()->route('hpboc.index')->with('success', 'Data HP BOC berhasil dihapus.');
+        try {
+            $device = Hpboc::find($id);
+
+            if (!$device) {
+                \Log::error('HP BOC device not found', ['id' => $id]);
+                return response()->json(['message' => 'Device not found'], 404);
+            }
+
+            $device->delete();
+            return redirect()->back()->with('success', 'Data berhasil dihapus.');
+            
+        } catch (\Exception $e) {
+            \Log::error('Error deleting HP BOC device:', [
+                'error' => $e->getMessage(),
+                'device_id' => $id
+            ]);
+            
+            return response()->json([
+                'message' => 'Error deleting device',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function import(Request $request)
