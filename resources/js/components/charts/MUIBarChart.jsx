@@ -1,42 +1,50 @@
 import React from 'react';
 import { BarChart } from '@mui/x-charts/BarChart';
 
-export default function MUIBarChart({ data, title, colors, height = 250, width = 400 }) {
-    const chartData = data.map(item => ({
-        ...item,
-        color: item.color || '#3b82f6'
-    }));
+export default function MUIBarChart({
+    data = [],
+    height = 250,
+    width = 400,
+    layout = 'vertical', // bisa 'vertical' atau 'horizontal'
+    seriesLabel = 'Jumlah', // Label untuk series yang bisa diatur
+}) {
+    if (!data.length) return <div className="text-gray-500 text-sm">No chart data.</div>;
 
-    const xAxisData = chartData.map(item => item.label);
-    const seriesData = chartData.map(item => item.value);
+    const labels = data.map(item => item.label);
+    const values = data.map(item => item.value);
+    const colors = data.map(item => item.color || '#3b82f6');
 
     return (
         <div className="w-full">
             <BarChart
+                layout={layout}
                 width={width}
                 height={height}
                 series={[
                     {
-                        data: seriesData,
-                        color: colors || '#3b82f6',
+                        data: values,
+                        color: (ctx) => colors[ctx.dataIndex],
+                        label: seriesLabel, // Menggunakan prop seriesLabel
                     },
                 ]}
-                xAxis={[
-                    {
-                        data: xAxisData,
-                        scaleType: 'band',
-                    },
-                ]}
+                xAxis={
+                    layout === 'vertical'
+                        ? [{ data: labels, scaleType: 'band' }]
+                        : [{ min: 0 }]
+                }
+                yAxis={
+                    layout === 'horizontal'
+                        ? [{ data: labels, scaleType: 'band' }]
+                        : [{}]
+                }
                 margin={{
                     top: 20,
                     right: 20,
-                    bottom: 60,
-                    left: 40,
+                    bottom: 50,
+                    left: layout === 'horizontal' ? 80 : 40,
                 }}
                 slotProps={{
-                    bar: {
-                        rx: 4,
-                    },
+                    bar: { rx: 6 },
                 }}
             />
         </div>

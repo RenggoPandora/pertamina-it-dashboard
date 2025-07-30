@@ -265,6 +265,16 @@ export default function Overview({
                                 }}
                                 size={200}
                             />
+                            <MUIBarChart
+                                data={[
+                                    { label: 'MPS', value: pcDeviceStats?.mps || 0, color: '#8b5cf6' },
+                                    { label: 'SM5', value: pcDeviceStats?.sm5 || 0, color: '#ec4899' },
+                                ]}
+                                layout="horizontal"
+                                height={200}
+                                width={450}
+                                seriesLabel="Alokasi"
+                            />
                         </div>
                         <div className="space-y-2 text-sm">
                             <div className="flex items-center justify-between">
@@ -372,7 +382,9 @@ export default function Overview({
                                 { label: 'Network', value: networkStats?.network || 0, color: '#8b5cf6' },
                             ]}
                             height={200}
-                            width={320}
+                            width={400}
+                            seriesLabel="Jenis Perangkat"
+                            layout="horizontal"
                             />
                         </div>
                         <div className="space-y-2 text-sm">
@@ -435,7 +447,9 @@ export default function Overview({
                                     { label: 'Sewa', value: cctvStats?.sewa || 0, color: '#10b981' },
                                 ]}
                                 height={200}
-                                width={320}
+                                width={400}
+                                seriesLabel="Kepemilikan"
+                                 layout="horizontal"
                             />
                         </div>
                         <div className="space-y-2 text-sm">
