@@ -1,10 +1,8 @@
 import React from 'react';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import Layout from '@/components/layouts/Layout';
 import MUIDonutChart from '@/components/charts/MUIDonutChart';
 import MUIBarChart from '@/components/charts/MUIBarChart';
-import { useState } from 'react';
-import dayjs from 'dayjs';
 
 export default function Overview({ 
     hpbocStats, 
@@ -13,10 +11,25 @@ export default function Overview({
     pcDeviceStats, 
     networkStats, 
     cctvStats, 
-    ticketStats 
+    ticketStats,
+    filters // Terima prop 'filters' dari controller
 }) {
-    const [selectedWeek, setSelectedWeek] = useState(1);
-    const [selectedDate, setSelectedDate] = useState(dayjs().format('YYYY-MM-DD'));
+
+    // Fungsi untuk menangani perubahan filter
+    const handleFilterChange = (key, value) => {
+        // Hapus filter lain saat filter baru diterapkan
+        const newFilters = { [key]: value };
+
+        router.get(route('dashboard'), newFilters, { // Ganti 'dashboard' dengan nama route Anda jika berbeda
+            preserveState: true,
+            replace: true,
+        });
+    };
+    
+    // Ambil nilai filter aktif dari prop 'filters'
+    const selectedWeek = filters.week;
+    const selectedDate = filters.date;
+
     return (
         <>
             <Head title="Overview - Pertamina IT Dashboard" />
@@ -24,7 +37,7 @@ export default function Overview({
                 activeMenuItem="Overview" 
                 title="Overview"
             >
-                {/* Stats Cards */}
+                {/* Bagian Card Statistik (tidak berubah) */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                     {/* HP BOC Card */}
                     <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-6 text-white">
@@ -90,38 +103,40 @@ export default function Overview({
 
                 {/* Week Navigation */}
                 <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center space-x-4">
-                    {[1, 2, 3, 4, 5].map(week => (
-                    <button
-                        key={week}
-                        onClick={() => setSelectedWeek(week)}
-                        className={`px-4 py-2 rounded-md text-sm font-medium border transition ${
-                        selectedWeek === week
-                            ? 'bg-blue-600 text-white border-blue-600 shadow'
-                            : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50'
-                        }`}
-                    >
-                        Minggu ke-{week}
-                    </button>
-                    ))}
-                </div>
+                    <div className="flex items-center space-x-4">
+                        {[1, 2, 3, 4, 5].map(week => (
+                        <button
+                            key={week}
+                            onClick={() => handleFilterChange('week', week)}
+                            className={`px-4 py-2 rounded-md text-sm font-medium border transition ${
+                            // Gunakan selectedWeek dari prop untuk menandai tombol aktif
+                            selectedWeek == week
+                                ? 'bg-blue-600 text-white border-blue-600 shadow'
+                                : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50 cursor-pointer'
+                            }`}
+                        >
+                            Minggu ke-{week}
+                        </button>
+                        ))}
+                    </div>
                     <div className="flex items-center space-x-4">
                         <input
-                        type="date"
-                        value={selectedDate}
-                        onChange={(e) => setSelectedDate(e.target.value)}
-                        className="px-3 py-2 rounded-md border border-gray-300 text-sm text-gray-700 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            type="date"
+                            // Gunakan selectedDate dari prop. Jika null, tampilkan string kosong.
+                            value={selectedDate || ''}
+                            onChange={(e) => handleFilterChange('date', e.target.value)}
+                            className="px-3 py-2 rounded-md border border-gray-300 text-sm text-gray-700 shadow-sm focus:ring-blue-500 focus:border-blue-500"
                         />
                         <button className="flex items-center space-x-2 px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow">
-                        <span>Export</span>
-                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-                        </svg>
+                            <span>Export</span>
+                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                            </svg>
                         </button>
                     </div>
                 </div>
 
-                {/* Charts Section */}
+                {/* Bagian Chart (tidak berubah) */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Ticket Chart */}
                     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">

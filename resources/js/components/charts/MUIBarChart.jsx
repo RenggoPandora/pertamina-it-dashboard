@@ -5,8 +5,8 @@ export default function MUIBarChart({
     data = [],
     height = 250,
     width = 400,
-    layout = 'vertical', // bisa 'vertical' atau 'horizontal'
-    seriesLabel = 'Jumlah', // Label untuk series yang bisa diatur
+    layout = 'vertical',
+    seriesLabel = 'Jumlah', 
 }) {
     if (!data.length) return <div className="text-gray-500 text-sm">No chart data.</div>;
 
@@ -24,7 +24,7 @@ export default function MUIBarChart({
                     {
                         data: values,
                         color: (ctx) => colors[ctx.dataIndex],
-                        label: seriesLabel, // Menggunakan prop seriesLabel
+                        label: seriesLabel,
                     },
                 ]}
                 xAxis={
