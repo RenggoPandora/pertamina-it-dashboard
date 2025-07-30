@@ -9,6 +9,7 @@ use Inertia\Inertia;
 
 class HpbocController extends Controller
 {
+     
     public function index()
     {
         $hpboc = Hpboc::with('site')->get();

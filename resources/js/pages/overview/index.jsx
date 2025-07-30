@@ -3,6 +3,8 @@ import { Head } from '@inertiajs/react';
 import Layout from '@/components/layouts/Layout';
 import MUIDonutChart from '@/components/charts/MUIDonutChart';
 import MUIBarChart from '@/components/charts/MUIBarChart';
+import { useState } from 'react';
+import dayjs from 'dayjs';
 
 export default function Overview({ 
     hpbocStats, 
@@ -13,6 +15,8 @@ export default function Overview({
     cctvStats, 
     ticketStats 
 }) {
+    const [selectedWeek, setSelectedWeek] = useState(1);
+    const [selectedDate, setSelectedDate] = useState(dayjs().format('YYYY-MM-DD'));
     return (
         <>
             <Head title="Overview - Pertamina IT Dashboard" />
@@ -86,21 +90,34 @@ export default function Overview({
 
                 {/* Week Navigation */}
                 <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-4">
+                    {[1, 2, 3, 4, 5].map(week => (
+                    <button
+                        key={week}
+                        onClick={() => setSelectedWeek(week)}
+                        className={`px-4 py-2 rounded-md text-sm font-medium border transition ${
+                        selectedWeek === week
+                            ? 'bg-blue-600 text-white border-blue-600 shadow'
+                            : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50'
+                        }`}
+                    >
+                        Minggu ke-{week}
+                    </button>
+                    ))}
+                </div>
                     <div className="flex items-center space-x-4">
-                        <span className="text-sm text-gray-600">Minggu ke-1</span>
-                        <span className="text-sm text-gray-600">Minggu ke-2</span>
-                        <span className="text-sm text-gray-600">Minggu ke-3</span>
-                        <span className="text-sm text-gray-600">Minggu ke-4</span>
-                        <span className="text-sm text-gray-600">Minggu ke-5</span>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <button className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-                            <span className="text-sm">Export</span>
-                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-                            </svg>
+                        <input
+                        type="date"
+                        value={selectedDate}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                        className="px-3 py-2 rounded-md border border-gray-300 text-sm text-gray-700 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                        />
+                        <button className="flex items-center space-x-2 px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow">
+                        <span>Export</span>
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                        </svg>
                         </button>
-                        <span className="text-sm text-gray-600">15/07/2025</span>
                     </div>
                 </div>
 
@@ -348,6 +365,15 @@ export default function Overview({
                                 }}
                                 size={200}
                             />
+                            <MUIBarChart
+                            data={[
+                                { label: 'Switches', value: networkStats?.switches || 0, color: '#3b82f6' },
+                                { label: 'Access Points', value: networkStats?.accessPoints || 0, color: '#10b981' },
+                                { label: 'Network', value: networkStats?.network || 0, color: '#8b5cf6' },
+                            ]}
+                            height={200}
+                            width={320}
+                            />
                         </div>
                         <div className="space-y-2 text-sm">
                             <div className="flex items-center justify-between">
@@ -402,6 +428,14 @@ export default function Overview({
                                     label: 'Total'
                                 }}
                                 size={200}
+                            />
+                            <MUIBarChart
+                                data={[
+                                    { label: 'Asset', value: cctvStats?.asset || 0 || 0, color: '#3b82f6' },
+                                    { label: 'Sewa', value: cctvStats?.sewa || 0, color: '#10b981' },
+                                ]}
+                                height={200}
+                                width={320}
                             />
                         </div>
                         <div className="space-y-2 text-sm">

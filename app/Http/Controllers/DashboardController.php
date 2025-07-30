@@ -25,36 +25,35 @@ class DashboardController extends Controller
 
         // Calculate statistics for HPBOC
         $hpbocStats = [
-            'total' => $hpbocs->count(),
-            'available' => $hpbocs->where('status', 'on')->count(),
-            'maintenance' => $hpbocs->where('status', 'maintenance')->count(),
-            'off' => $hpbocs->where('status', 'off')->count(),
+            'total' => $hpbocs->sum('jumlah'), 
+            'available' => $hpbocs->where('status', 'baik')->sum('jumlah'),
+            'off' => $hpbocs->where('status', 'rusak')->sum('jumlah'),
         ];
 
         // Calculate statistics for Radio HT
         $radioStats = [
-            'total' => $radios->count(),
-            'on' => $radios->where('status', 'on')->count(),
-            'off' => $radios->where('status', 'off')->count(),
-            'maintenance' => $radios->where('status', 'maintenance')->count(),
+            'total' => $radios->sum('jumlah'),
+            'on' => $radios->where('status', 'on')->sum('jumlah'),
+            'off' => $radios->where('status', 'off')->sum('jumlah'),
+            'maintenance' => $radios->where('status', 'maintenance')->sum('jumlah'),
         ];
 
         // Calculate statistics for Telephone
         $telephoneStats = [
-            'total' => $telephones->count(),
-            'on' => $telephones->where('status', 'on')->count(),
-            'off' => $telephones->where('status', 'off')->count(),
+            'total' => $telephones->sum('jumlah'),
+            'on' => $telephones->where('status', 'on')->sum('jumlah'),
+            'off' => $telephones->where('status', 'off')->sum('jumlah'),
             'maintenance' => $telephones->where('status', 'maintenance')->count(),
         ];
 
         // Calculate statistics for PC Device
         $pcDeviceStats = [
-            'total' => $pcDevices->count(),
-            'desktop' => $pcDevices->where('jenis', 'desktop')->count(),
-            'notebook' => $pcDevices->where('jenis', 'notebook')->count(),
-            'printer' => $pcDevices->where('jenis', 'printer')->count(),
-            'mps' => $pcDevices->where('alokasi', 'MPS')->count(),
-            'sm5' => $pcDevices->where('alokasi', 'SM5')->count(),
+            'total' => $pcDevices->sum('jumlah'),
+            'desktop' => $pcDevices->where('jenis', 'desktop')->sum('jumlah'),
+            'notebook' => $pcDevices->where('jenis', 'notebook')->sum('jumlah'),
+            'printer' => $pcDevices->where('jenis', 'printer')->sum('jumlah'),
+            'mps' => $pcDevices->where('alokasi', 'MPS')->sum('jumlah'),
+            'sm5' => $pcDevices->where('alokasi', 'SM5')->sum('jumlah'),
         ];
 
         // Calculate statistics for Network Device
