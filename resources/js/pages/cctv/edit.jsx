@@ -5,10 +5,17 @@ import Layout from '@/components/layouts/Layout';
 export default function EditCctv({ cctv }) {
     const [showInfo, setShowInfo] = useState(false);
 
+    // Format date function to convert ISO date to YYYY-MM-DD
+    const formatDateForInput = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toISOString().split('T')[0];
+    };
+
     const { data, setData, put, processing, errors } = useForm({
         nama_perangkat: cctv.nama_perangkat,
         ip_address: cctv.ip_address,
-        tanggal_pencatatan: cctv.tanggal_pencatatan,
+        tanggal_pencatatan: formatDateForInput(cctv.tanggal_pencatatan),
         kepemilikan: cctv.kepemilikan,
         status: cctv.status,
     });

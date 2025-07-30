@@ -62,19 +62,49 @@ class NetworkDeviceController extends Controller
         }
     }
 
-    public function update(Request $request, NetworkDevice $networkDevice)
+    public function update(Request $request, $id)
     {
-        $validated = $request->validate([
-            'nama_perangkat' => 'required|string|max:255',
-            'ip_address' => 'required|ipv4',
-            'tanggal_pencatatan' => 'required|date',
-            'jenis' => 'required|in:switch,access point,network',
-            'status' => 'required|in:up,down',
-        ]);
+        try {
+            \Log::info('Update Network Device request:', [
+                'id' => $id,
+                'request_data' => $request->all()
+            ]);
 
-        $networkDevice->update($validated);
+            $networkDevice = NetworkDevice::find($id);
+            
+            if (!$networkDevice) {
+                \Log::error('Network Device not found:', ['id' => $id]);
+                return redirect()->back()->with('error', 'Network Device tidak ditemukan.');
+            }
 
-        return redirect()->back()->with('success', 'Data berhasil diperbarui.');
+            $validated = $request->validate([
+                'nama_perangkat' => 'required|string|max:255',
+                'ip_address' => 'required|ipv4',
+                'tanggal_pencatatan' => 'required|date',
+                'jenis' => 'required|in:switch,access point,network',
+                'status' => 'required|in:up,down',
+            ]);
+
+            $networkDevice->update($validated);
+
+            \Log::info('Network Device updated successfully:', [
+                'id' => $networkDevice->id,
+                'updated_data' => $validated
+            ]);
+
+            return redirect()->route('networkdevice.index')->with('success', 'Data berhasil diperbarui.');
+            
+        } catch (\Exception $e) {
+            \Log::error('Error updating Network Device:', [
+                'id' => $id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan saat memperbarui data: ' . $e->getMessage());
+        }
     }
 
     public function destroy($id)
