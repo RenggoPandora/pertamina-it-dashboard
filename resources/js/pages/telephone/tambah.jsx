@@ -200,7 +200,7 @@ export default function TambahTelephone({ sites }) {
                                 <option value="">Pilih lokasi penggunaan</option>
                                 {sites && sites.map((site) => (
                                     <option key={site.id} value={site.id}>
-                                        {site.nama_site}
+                                        {site.lokasi}
                                     </option>
                                 ))}
                             </select>
