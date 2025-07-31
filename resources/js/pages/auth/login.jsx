@@ -1,5 +1,7 @@
 import React from 'react';
 import { Head, useForm } from '@inertiajs/react';
+import Squares from '@/components/ui/Squares';
+
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -19,7 +21,18 @@ export default function Login({ status, canResetPassword }) {
         <>
             <Head title="Login - Pertamina IT Dashboard" />
             
-            <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+            {/* Background Squares - positioned as background */}
+            <div className="absolute top-0 left-0 right-0 bottom-0 w-full h-full">
+                <Squares 
+                    speed={0.5} 
+                    squareSize={60}
+                    direction='diagonal'
+                    borderColor='#6B7280'
+                    hoverFillColor='#ddd'
+                />
+            </div>
+            {/* Main Content - positioned above background */}
+            <div className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-md">
                     {/* Logo */}
                     <div className="flex justify-center">
@@ -38,7 +51,7 @@ export default function Login({ status, canResetPassword }) {
                 </div>
 
                 <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-                    <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+                    <div className="bg-white/90 backdrop-blur-sm py-8 px-4 shadow-lg sm:rounded-lg sm:px-10 border border-white/20">
                         {/* Status Message */}
                         {status && (
                             <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-md">
@@ -61,7 +74,7 @@ export default function Login({ status, canResetPassword }) {
                                         required
                                         value={data.email}
                                         onChange={(e) => setData('email', e.target.value)}
-                                        className="appearance-none block text-gray-700 w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                        className="appearance-none block text-gray-700 w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white/80"
                                         placeholder="Enter your email"
                                     />
                                     {errors.email && (
@@ -84,7 +97,7 @@ export default function Login({ status, canResetPassword }) {
                                         required
                                         value={data.password}
                                         onChange={(e) => setData('password', e.target.value)}
-                                        className="appearance-none text-gray-700 block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                        className="appearance-none text-gray-700 block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white/80"
                                         placeholder="Enter your password"
                                     />
                                     {errors.password && (
@@ -126,7 +139,7 @@ export default function Login({ status, canResetPassword }) {
                                 <button
                                     type="submit"
                                     disabled={processing}
-                                    className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                                 >
                                     {processing && (
                                         <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -146,14 +159,14 @@ export default function Login({ status, canResetPassword }) {
                                     <div className="w-full border-t border-gray-300" />
                                 </div>
                                 <div className="relative flex justify-center text-sm">
-                                    <span className="px-2 bg-white text-gray-500">Don't have an account?</span>
+                                    <span className="px-2 bg-white/80 text-gray-500">Don't have an account?</span>
                                 </div>
                             </div>
 
                             <div className="mt-6">
                                 <a
                                     href={route('register')}
-                                    className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                                    className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white/80 text-sm font-medium text-gray-500 hover:bg-gray-50"
                                 >
                                     Sign up
                                 </a>

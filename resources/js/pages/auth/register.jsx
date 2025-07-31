@@ -1,5 +1,6 @@
 import React from 'react';
 import { Head, useForm } from '@inertiajs/react';
+import Squares from '@/components/ui/Squares';
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -19,8 +20,17 @@ export default function Register() {
     return (
         <>
             <Head title="Register - Pertamina IT Dashboard" />
-            
-            <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+            {/* Background Squares - positioned as background */}
+                        <div className="absolute top-0 left-0 right-0 bottom-0 w-full h-full">
+                            <Squares 
+                                speed={0.5} 
+                                squareSize={60}
+                                direction='diagonal'
+                                borderColor='#6B7280'
+                                hoverFillColor='#ddd'
+                            />
+                        </div>
+            <div className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-md">
                     {/* Logo */}
                     <div className="flex justify-center">
@@ -39,7 +49,8 @@ export default function Register() {
                 </div>
 
                 <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-                    <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+                    <div className="bg-white/90 backdrop-blur-sm py-8 px-4 shadow-lg sm:rounded-lg sm:px-10 border border-white/20">
+
                         <form className="space-y-6" onSubmit={submit}>
                             {/* Name Field */}
                             <div>
