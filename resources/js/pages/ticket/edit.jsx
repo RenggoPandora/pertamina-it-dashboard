@@ -5,6 +5,13 @@ import Layout from '@/components/layouts/Layout';
 export default function EditTicket({ ticket }) {
     const [showInfo, setShowInfo] = useState(false);
 
+    // Format date function to convert ISO date to YYYY-MM-DD
+    const formatDateForInput = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toISOString().split('T')[0];
+    };
+
     const { data, setData, put, processing, errors } = useForm({
         support_company: ticket.support_company,
         req_number: ticket.req_number,

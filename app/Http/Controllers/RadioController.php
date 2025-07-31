@@ -6,6 +6,7 @@ use App\Models\Radio;
 use App\Models\Site;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 class RadioController extends Controller
 {
@@ -43,7 +44,7 @@ class RadioController extends Controller
     public function edit(Radio $radio)
     {
         $sites = Site::all();
-        return Inertia::render('Radio/Edit', [
+        return Inertia::render('radio/edit', [
             'radio' => $radio,
             'sites' => $sites
         ]);
@@ -52,6 +53,8 @@ class RadioController extends Controller
     public function update(Request $request, Radio $radio)
     {
         $request->validate([
+            'nama_perangkat' => 'required|string|max:255',
+            'jumlah' => 'required|integer|min:1',
             'tanggal_pencatatan' => 'required|date',
             'status' => 'required|in:on,off',
             'site_id' => 'required|exists:sites,id',
@@ -62,11 +65,30 @@ class RadioController extends Controller
         return redirect()->route('radio.index')->with('success', 'Data radio berhasil diperbarui.');
     }
 
-    public function destroy(Radio $radio)
+    public function destroy($id)
     {
-        $radio->delete();
+        try {
+            $radio = Radio::find($id);
 
-        return redirect()->route('radio.index')->with('success', 'Data Radio HT berhasil dihapus.');
+            if (!$radio) {
+                Log::error('Radio not found', ['id' => $id]);
+                return response()->json(['message' => 'Radio not found'], 404);
+            }
+
+            $radio->delete();
+            return redirect()->back()->with('success', 'Data berhasil dihapus.');
+            
+        } catch (\Exception $e) {
+            Log::error('Error deleting radio:', [
+                'error' => $e->getMessage(),
+                'radio_id' => $id
+            ]);
+            
+            return response()->json([
+                'message' => 'Error deleting radio',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function import(Request $request)

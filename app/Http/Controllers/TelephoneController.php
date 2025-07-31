@@ -10,6 +10,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\TelephoneImport;
 use App\Exports\TelephoneExport;
 use App\Exports\TelephoneTemplateExport;
+use Illuminate\Support\Facades\Log;
 
 class TelephoneController extends Controller
 {
@@ -91,9 +92,27 @@ class TelephoneController extends Controller
 
     public function destroy($id)
     {
-        $telephone = Telephone::findOrFail($id);
-        $telephone->delete();
+        try {
+            $telephone = Telephone::find($id);
 
-        return redirect()->route('telephone.index')->with('success', 'Data Telephone berhasil dihapus.');
+            if (!$telephone) {
+                Log::error('Telephone not found', ['id' => $id]);
+                return response()->json(['message' => 'Telephone not found'], 404);
+            }
+
+            $telephone->delete();
+            return redirect()->back()->with('success', 'Data berhasil dihapus.');
+            
+        } catch (\Exception $e) {
+            Log::error('Error deleting telephone:', [
+                'error' => $e->getMessage(),
+                'telephone_id' => $id
+            ]);
+            
+            return response()->json([
+                'message' => 'Error deleting telephone',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }
