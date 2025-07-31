@@ -40,7 +40,7 @@ class HpbocController extends Controller
     public function edit(Hpboc $hpboc)
     {
         $sites = Site::all();
-        return Inertia::render('Hpboc/Edit', [
+        return Inertia::render('hpboc/edit', [
             'hpboc' => $hpboc,
             'sites' => $sites
         ]);
