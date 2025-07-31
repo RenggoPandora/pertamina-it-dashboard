@@ -44,7 +44,7 @@ class RadioController extends Controller
     public function edit(Radio $radio)
     {
         $sites = Site::all();
-        return Inertia::render('Radio/Edit', [
+        return Inertia::render('radio/edit', [
             'radio' => $radio,
             'sites' => $sites
         ]);
@@ -53,6 +53,8 @@ class RadioController extends Controller
     public function update(Request $request, Radio $radio)
     {
         $request->validate([
+            'nama_perangkat' => 'required|string|max:255',
+            'jumlah' => 'required|integer|min:1',
             'tanggal_pencatatan' => 'required|date',
             'status' => 'required|in:on,off',
             'site_id' => 'required|exists:sites,id',

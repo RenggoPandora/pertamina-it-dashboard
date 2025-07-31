@@ -2,41 +2,41 @@ import React, { useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import Layout from '@/components/layouts/Layout';
 
-export default function TambahTelephone({ sites }) {
+export default function EditRadio({ radio, sites }) {
     const [showInfo, setShowInfo] = useState(false);
-    
-    const { data, setData, post, processing, errors, reset } = useForm({
-        nama_pic: '',
-        jumlah: '',
-        tanggal_pencatatan: '',
-        status: 'on',
-        site_id: '',
+
+    // Format date function to convert ISO date to YYYY-MM-DD
+    const formatDateForInput = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toISOString().split('T')[0];
+    };
+
+    const { data, setData, put, processing, errors } = useForm({
+        nama_perangkat: radio.nama_perangkat || '',
+        jumlah: radio.jumlah || '',
+        tanggal_pencatatan: formatDateForInput(radio.tanggal_pencatatan) || '',
+        status: radio.status || '',
+        site_id: radio.site_id || '',
     });
 
     const submit = (e) => {
         e.preventDefault();
-        post(route('telephone.store'), {
-            onSuccess: () => {
-                reset();
-            },
-            onError: () => {
-                // Error handling is done automatically by Inertia
-            },
-        });
+        put(route('radio.update', radio.id));
     };
 
     return (
         <>
-            <Head title="Tambah Telephone - Pertamina IT Dashboard" />
-            <Layout 
-                activeMenuItem="Telephone" 
-                title="Tambah Telephone"
-                subtitle="Menambahkan perangkat Telephone baru"
+            <Head title="Edit Radio - Pertamina IT Dashboard" />
+            <Layout
+                activeMenuItem="Radio"
+                title="Edit Radio"
+                subtitle="Mengubah informasi perangkat radio komunikasi"
             >
                 {/* Back Button */}
                 <div className="mb-6">
                     <a
-                        href={route('telephone.index')}
+                        href={route('radio.index')}
                         className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
                     >
                         <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -50,9 +50,10 @@ export default function TambahTelephone({ sites }) {
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                     <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                         <div>
-                            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Formulir Tambah Telephone</h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">Isi semua informasi yang diperlukan untuk menambahkan perangkat Telephone baru</p>
+                            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Edit Radio</h3>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Ubah informasi Radio sesuai kebutuhan</p>
                         </div>
+                        
                         {/* Info Button */}
                         <div className="relative">
                             <button
@@ -64,10 +65,8 @@ export default function TambahTelephone({ sites }) {
                                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
                                 </svg>
                             </button>
-                            
-                            {/* Information Tooltip */}
                             {showInfo && (
-                                <div className="absolute right-0 top-10 w-80 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 transform animate-in slide-in-from-right-2">
+                                <div className="absolute right-0 top-10 w-80 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
                                     <div className="p-4">
                                         <div className="flex items-start">
                                             <div className="flex-shrink-0">
@@ -76,70 +75,58 @@ export default function TambahTelephone({ sites }) {
                                                 </svg>
                                             </div>
                                             <div className="ml-3">
-                                                <div className="flex items-center justify-between mb-2">
-                                                    <h3 className="text-sm font-medium text-gray-900 dark:text-white">
-                                                        Informasi Penting
-                                                    </h3>
-                                                    <button
-                                                        onClick={() => setShowInfo(false)}
-                                                        className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-                                                    >
-                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                                        </svg>
-                                                    </button>
-                                                </div>
-                                                <div className="text-sm text-gray-600 dark:text-gray-300">
+                                                <h3 className="text-sm font-medium text-gray-900 dark:text-white">
+                                                    Informasi Penting
+                                                </h3>
+                                                <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                                                     <ul className="list-disc list-inside space-y-1">
-                                                        <li>Pastikan semua data yang diisi sudah benar sebelum menyimpan</li>
-                                                        <li>Nama PIC Telephone harus unik dan mudah diidentifikasi</li>
-                                                        <li>Pilih lokasi site sesuai dengan penempatan perangkat</li>
-                                                        <li>Status perangkat dapat diubah sewaktu-waktu setelah disimpan</li>
+                                                        <li>Nama perangkat harus diisi dengan lengkap</li>
+                                                        <li>Jumlah harus berupa angka positif</li>
+                                                        <li>Pilih lokasi sesuai penempatan perangkat</li>
+                                                        <li>Status menunjukkan kondisi operasional radio</li>
                                                     </ul>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    {/* Arrow pointing to button */}
-                                    <div className="absolute top-2 -right-2 w-4 h-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 transform rotate-45 border-l-0 border-b-0"></div>
                                 </div>
                             )}
                         </div>
                     </div>
-                    
+
                     <form onSubmit={submit} className="p-6 space-y-6">
-                        {/* Nama PIC */}
+                        {/* Nama Perangkat */}
                         <div>
-                            <label htmlFor="nama_pic" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Nama PIC <span className="text-red-500">*</span>
+                            <label htmlFor="nama_perangkat" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Nama Perangkat <span className="text-red-500">*</span>
                             </label>
                             <input
-                                id="nama_pic"
                                 type="text"
-                                value={data.nama_pic}
-                                onChange={(e) => setData('nama_pic', e.target.value)}
+                                id="nama_perangkat"
+                                value={data.nama_perangkat}
+                                onChange={e => setData('nama_perangkat', e.target.value)}
                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                                placeholder="Masukkan nama PIC Telephone"
+                                placeholder="Masukkan nama perangkat radio"
                                 required
                             />
-                            {errors.nama_pic && (
-                                <p className="mt-1 text-sm text-red-600">{errors.nama_pic}</p>
+                            {errors.nama_perangkat && (
+                                <p className="mt-1 text-sm text-red-600">{errors.nama_perangkat}</p>
                             )}
                         </div>
 
                         {/* Jumlah */}
                         <div>
                             <label htmlFor="jumlah" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Jumlah Unit <span className="text-red-500">*</span>
+                                Jumlah <span className="text-red-500">*</span>
                             </label>
                             <input
-                                id="jumlah"
                                 type="number"
+                                id="jumlah"
                                 min="1"
                                 value={data.jumlah}
-                                onChange={(e) => setData('jumlah', e.target.value)}
+                                onChange={e => setData('jumlah', e.target.value)}
                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                                placeholder="Masukkan jumlah unit"
+                                placeholder="Masukkan jumlah radio"
                                 required
                             />
                             {errors.jumlah && (
@@ -153,10 +140,10 @@ export default function TambahTelephone({ sites }) {
                                 Tanggal Pencatatan <span className="text-red-500">*</span>
                             </label>
                             <input
-                                id="tanggal_pencatatan"
                                 type="date"
+                                id="tanggal_pencatatan"
                                 value={data.tanggal_pencatatan}
-                                onChange={(e) => setData('tanggal_pencatatan', e.target.value)}
+                                onChange={e => setData('tanggal_pencatatan', e.target.value)}
                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                                 required
                             />
@@ -173,19 +160,20 @@ export default function TambahTelephone({ sites }) {
                             <select
                                 id="status"
                                 value={data.status}
-                                onChange={(e) => setData('status', e.target.value)}
+                                onChange={e => setData('status', e.target.value)}
                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                                 required
                             >
-                                <option value="on">Aktif</option>
-                                <option value="off">Tidak Aktif</option>
+                                <option value="">Pilih status</option>
+                                <option value="on">On</option>
+                                <option value="off">Off</option>
                             </select>
                             {errors.status && (
                                 <p className="mt-1 text-sm text-red-600">{errors.status}</p>
                             )}
                         </div>
 
-                        {/* Site Location */}
+                        {/* Lokasi Penggunaan (Site) */}
                         <div>
                             <label htmlFor="site_id" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Lokasi Penggunaan <span className="text-red-500">*</span>
@@ -193,14 +181,14 @@ export default function TambahTelephone({ sites }) {
                             <select
                                 id="site_id"
                                 value={data.site_id}
-                                onChange={(e) => setData('site_id', e.target.value)}
+                                onChange={e => setData('site_id', e.target.value)}
                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                                 required
                             >
                                 <option value="">Pilih lokasi penggunaan</option>
                                 {sites && sites.map((site) => (
                                     <option key={site.id} value={site.id}>
-                                        {site.nama_site}
+                                        {site.lokasi}
                                     </option>
                                 ))}
                             </select>
@@ -209,10 +197,10 @@ export default function TambahTelephone({ sites }) {
                             )}
                         </div>
 
-                        {/* Submit Buttons */}
+                        {/* Form Actions */}
                         <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-700">
                             <a
-                                href={route('telephone.index')}
+                                href={route('radio.index')}
                                 className="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                             >
                                 Batal
@@ -231,7 +219,7 @@ export default function TambahTelephone({ sites }) {
                                         Menyimpan...
                                     </div>
                                 ) : (
-                                    'Simpan Telephone'
+                                    'Simpan Perubahan'
                                 )}
                             </button>
                         </div>
