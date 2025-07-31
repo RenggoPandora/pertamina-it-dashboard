@@ -6,6 +6,7 @@ use App\Models\Radio;
 use App\Models\Site;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 class RadioController extends Controller
 {
@@ -68,7 +69,7 @@ class RadioController extends Controller
             $radio = Radio::find($id);
 
             if (!$radio) {
-                \Log::error('Radio not found', ['id' => $id]);
+                Log::error('Radio not found', ['id' => $id]);
                 return response()->json(['message' => 'Radio not found'], 404);
             }
 
@@ -76,7 +77,7 @@ class RadioController extends Controller
             return redirect()->back()->with('success', 'Data berhasil dihapus.');
             
         } catch (\Exception $e) {
-            \Log::error('Error deleting radio:', [
+            Log::error('Error deleting radio:', [
                 'error' => $e->getMessage(),
                 'radio_id' => $id
             ]);

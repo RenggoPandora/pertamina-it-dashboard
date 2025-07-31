@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PCDevice;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 class PCDeviceController extends Controller
 {
@@ -59,8 +60,8 @@ class PCDeviceController extends Controller
             ]);
             
         } catch (\Exception $e) {
-            \Log::error('Error loading PC Device edit page:', [
-                'id' => $id,
+            Log::error('Error loading PC Device edit page:', [
+            'id' => $id,
                 'error' => $e->getMessage()
             ]);
             
@@ -72,7 +73,7 @@ class PCDeviceController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            \Log::info('Update PC Device request:', [
+            Log::info('Update PC Device request:', [
                 'id' => $id,
                 'request_data' => $request->all()
             ]);
@@ -80,12 +81,12 @@ class PCDeviceController extends Controller
             $pcDevice = PCDevice::find($id);
             
             if (!$pcDevice) {
-                \Log::error('PC Device not found:', ['id' => $id]);
+                Log::error('PC Device not found:', ['id' => $id]);
                 return redirect()->back()->with('error', 'PC Device tidak ditemukan.');
             }
 
             // Log data sebelum update
-            \Log::info('Data sebelum update:', [
+            Log::info('Data sebelum update:', [
                 'id' => $id,
                 'old_data' => $pcDevice->toArray()
             ]);
@@ -98,12 +99,12 @@ class PCDeviceController extends Controller
                 'tanggal_pencatatan' => 'required|date',
             ]);
 
-            \Log::info('Data yang divalidasi:', $validated);
+            Log::info('Data yang divalidasi:', $validated);
 
             $pcDevice->update($validated);
 
             // Log data setelah update
-            \Log::info('Update berhasil:', [
+            Log::info('Update berhasil:', [
                 'id' => $id,
                 'new_data' => $pcDevice->fresh()->toArray()
             ]);
@@ -111,7 +112,7 @@ class PCDeviceController extends Controller
             return redirect()->route('pcdevice.index')->with('success', 'Data berhasil diperbarui.');
             
         } catch (\Exception $e) {
-            \Log::error('Error updating PC Device:', [
+            Log::error('Error updating PC Device:', [
                 'id' => $id,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
@@ -128,7 +129,7 @@ class PCDeviceController extends Controller
         $pcDevice = PCDevice::find($id);
 
         if (!$pcDevice) {
-            \Log::error('PC device not found', ['id' => $id]);
+            Log::error('PC device not found', ['id' => $id]);
             return response()->json(['message' => 'PC Device not found'], 404);
         }
 

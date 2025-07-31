@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\NetworkDevice;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 class NetworkDeviceController extends Controller
 {
@@ -52,7 +53,7 @@ class NetworkDeviceController extends Controller
             ]);
             
         } catch (\Exception $e) {
-            \Log::error('Error loading Network Device edit page:', [
+            Log::error('Error loading Network Device edit page:', [
                 'id' => $id,
                 'error' => $e->getMessage()
             ]);
@@ -65,7 +66,7 @@ class NetworkDeviceController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            \Log::info('Update Network Device request:', [
+            Log::info('Update Network Device request:', [
                 'id' => $id,
                 'request_data' => $request->all()
             ]);
@@ -73,7 +74,7 @@ class NetworkDeviceController extends Controller
             $networkDevice = NetworkDevice::find($id);
             
             if (!$networkDevice) {
-                \Log::error('Network Device not found:', ['id' => $id]);
+                Log::error('Network Device not found:', ['id' => $id]);
                 return redirect()->back()->with('error', 'Network Device tidak ditemukan.');
             }
 
@@ -87,7 +88,7 @@ class NetworkDeviceController extends Controller
 
             $networkDevice->update($validated);
 
-            \Log::info('Network Device updated successfully:', [
+            Log::info('Network Device updated successfully:', [
                 'id' => $networkDevice->id,
                 'updated_data' => $validated
             ]);
@@ -95,7 +96,7 @@ class NetworkDeviceController extends Controller
             return redirect()->route('networkdevice.index')->with('success', 'Data berhasil diperbarui.');
             
         } catch (\Exception $e) {
-            \Log::error('Error updating Network Device:', [
+            Log::error('Error updating Network Device:', [
                 'id' => $id,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
@@ -112,7 +113,7 @@ class NetworkDeviceController extends Controller
     $networkDevice = NetworkDevice::find($id);
 
     if (!$networkDevice) {
-        \Log::error('Network device not found', ['id' => $id]);
+        Log::error('Network device not found', ['id' => $id]);
         return response()->json(['message' => 'Device not found'], 404);
     }
 

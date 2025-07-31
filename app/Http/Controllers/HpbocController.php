@@ -6,6 +6,7 @@ use App\Models\Hpboc;
 use App\Models\Site;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 class HpbocController extends Controller
 {
@@ -66,7 +67,7 @@ class HpbocController extends Controller
             $device = Hpboc::find($id);
 
             if (!$device) {
-                \Log::error('HP BOC device not found', ['id' => $id]);
+                Log::error('HP BOC device not found', ['id' => $id]);
                 return response()->json(['message' => 'Device not found'], 404);
             }
 
@@ -74,7 +75,7 @@ class HpbocController extends Controller
             return redirect()->back()->with('success', 'Data berhasil dihapus.');
             
         } catch (\Exception $e) {
-            \Log::error('Error deleting HP BOC device:', [
+            Log::error('Error deleting HP BOC device:', [
                 'error' => $e->getMessage(),
                 'device_id' => $id
             ]);
