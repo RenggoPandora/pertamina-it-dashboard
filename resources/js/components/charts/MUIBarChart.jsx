@@ -10,9 +10,14 @@ export default function MUIBarChart({
 }) {
     if (!data.length) return <div className="text-gray-500 text-sm">No chart data.</div>;
 
-    const labels = data.map(item => item.label);
-    const values = data.map(item => item.value);
-    const colors = data.map(item => item.color || '#3b82f6');
+    const series = data.map((item, index) => ({
+        data: [item.value],
+        label: item.label,
+        color: item.color || '#34A8FF',
+    }));
+
+    const axisLabels = data.map(item => item.label);
+
 
     return (
         <div className="w-full">
@@ -20,21 +25,15 @@ export default function MUIBarChart({
                 layout={layout}
                 width={width}
                 height={height}
-                series={[
-                    {
-                        data: values,
-                        color: (ctx) => colors[ctx.dataIndex],
-                        label: seriesLabel,
-                    },
-                ]}
+                series={series}
                 xAxis={
                     layout === 'vertical'
-                        ? [{ data: labels, scaleType: 'band' }]
+                        ? [{ data: axisLabels, scaleType: 'band' }]
                         : [{ min: 0 }]
                 }
                 yAxis={
                     layout === 'horizontal'
-                        ? [{ data: labels, scaleType: 'band' }]
+                        ? [{ data: axisLabels, scaleType: 'band' }]
                         : [{}]
                 }
                 margin={{

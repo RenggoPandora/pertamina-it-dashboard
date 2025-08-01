@@ -12,7 +12,7 @@ export default function Overview({
     networkStats, 
     cctvStats, 
     ticketStats,
-    filters // Terima prop 'filters' dari controller
+    filters 
 }) {
 
     // Fungsi untuk menangani perubahan filter
@@ -154,7 +154,7 @@ export default function Overview({
                                     { label: 'Resolved', value: ticketStats?.resolved || 0, color: '#06b6d4' },
                                 ]}
                                 height={200}
-                                width={350}
+                                width={400}
                             />
                         </div>
                         <div className="flex justify-center mt-4 space-x-4 text-xs">
