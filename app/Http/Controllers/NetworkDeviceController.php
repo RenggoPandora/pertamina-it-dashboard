@@ -30,7 +30,9 @@ class NetworkDeviceController extends Controller
             'ip_address' => 'required|ipv4',
             'tanggal_pencatatan' => 'required|date',
             'jenis' => 'required|in:switch,access point,network',
-            'status' => 'required|in:up,down',
+            'up' => 'required|string|max:255',
+            'down' => 'required|string|max:255',
+            'availability' => 'required|string|max:255',
         ]);
 
         NetworkDevice::create($validated);
@@ -83,7 +85,9 @@ class NetworkDeviceController extends Controller
                 'ip_address' => 'required|ipv4',
                 'tanggal_pencatatan' => 'required|date',
                 'jenis' => 'required|in:switch,access point,network',
-                'status' => 'required|in:up,down',
+                'up' => 'required|string|max:255',
+                'down' => 'required|string|max:255',
+                'availability' => 'required|string|max:255',
             ]);
 
             $networkDevice->update($validated);

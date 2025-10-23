@@ -16,7 +16,9 @@ class NetworkDevice extends Model
         'ip_address',
         'tanggal_pencatatan',
         'jenis',
-        'status',
+        'up',
+        'down',
+        'availability',
     ];
 
     protected $casts = [

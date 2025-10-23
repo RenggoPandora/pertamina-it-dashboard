@@ -220,7 +220,7 @@ export default function TambahCctv() {
                                 value={data.up}
                                 onChange={(e) => setData('up', e.target.value)}
                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                                placeholder="Masukkan waktu aktif (opsional)"
+                                placeholder="Masukkan waktu aktif"
                             />
                             {errors.up && (
                                 <p className="mt-1 text-sm text-red-600">{errors.up}</p>
@@ -238,7 +238,7 @@ export default function TambahCctv() {
                                 value={data.down}
                                 onChange={(e) => setData('down', e.target.value)}
                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                                placeholder="Masukkan waktu tidak aktif (opsional)"
+                                placeholder="Masukkan waktu tidak aktif"
                             />
                             {errors.down && (
                                 <p className="mt-1 text-sm text-red-600">{errors.down}</p>
@@ -256,7 +256,7 @@ export default function TambahCctv() {
                                 value={data.availability}
                                 onChange={(e) => setData('availability', e.target.value)}
                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                                placeholder="Masukkan persentase ketersediaan (opsional)"
+                                placeholder="Masukkan persentase ketersediaan"
                             />
                             {errors.availability && (
                                 <p className="mt-1 text-sm text-red-600">{errors.availability}</p>

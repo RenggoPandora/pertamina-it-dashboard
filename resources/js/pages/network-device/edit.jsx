@@ -17,7 +17,9 @@ export default function EditNetworkDevice({ networkDevice }) {
         ip_address: networkDevice.ip_address || '',
         tanggal_pencatatan: formatDateForInput(networkDevice.tanggal_pencatatan) || '',
         jenis: networkDevice.jenis || '',
-        status: networkDevice.status || '',
+        up: networkDevice.up || '',
+        down: networkDevice.down || '',
+        availability: networkDevice.availability || '',
     });
 
     const submit = (e) => {
@@ -173,24 +175,60 @@ export default function EditNetworkDevice({ networkDevice }) {
                             )}
                         </div>
 
-                        {/* Status */}
+                        {/* Up Time */}
                         <div>
-                            <label htmlFor="status" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Status <span className="text-red-500">*</span>
+                            <label htmlFor="up" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Up Time <span className="text-red-500">*</span>
                             </label>
-                            <select
-                                id="status"
-                                value={data.status}
-                                onChange={e => setData('status', e.target.value)}
+                            <input
+                                type="text"
+                                id="up"
+                                value={data.up}
+                                onChange={e => setData('up', e.target.value)}
                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                placeholder="Masukkan waktu aktif (contoh: 23H 31M 28S)"
                                 required
-                            >
-                                <option value="">Pilih status</option>
-                                <option value="up">Up</option>
-                                <option value="down">Down</option>
-                            </select>
-                            {errors.status && (
-                                <p className="mt-1 text-sm text-red-600">{errors.status}</p>
+                            />
+                            {errors.up && (
+                                <p className="mt-1 text-sm text-red-600">{errors.up}</p>
+                            )}
+                        </div>
+
+                        {/* Down Time */}
+                        <div>
+                            <label htmlFor="down" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Down Time <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                id="down"
+                                value={data.down}
+                                onChange={e => setData('down', e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                placeholder="Masukkan waktu tidak aktif (contoh: 0H 2M 14S)"
+                                required
+                            />
+                            {errors.down && (
+                                <p className="mt-1 text-sm text-red-600">{errors.down}</p>
+                            )}
+                        </div>
+
+                        {/* Availability */}
+                        <div>
+                            <label htmlFor="availability" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Availability (%) <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                id="availability"
+                                value={data.availability}
+                                onChange={e => setData('availability', e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                placeholder="Masukkan persentase availability (contoh: 98.17)"
+                                required
+                            />
+                            {errors.availability && (
+                                <p className="mt-1 text-sm text-red-600">{errors.availability}</p>
                             )}
                         </div>
 

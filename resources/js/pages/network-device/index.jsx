@@ -140,8 +140,8 @@ export default function NetworkDevice({ networkDevices, flash }) {
                 {/* Stats Grid - 3 Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     {/* Total Devices Card */}
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 h-32">
-                        <div className="flex items-center h-full">
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center">
                             <div className="flex-shrink-0">
                                 <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
                                     <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -151,99 +151,102 @@ export default function NetworkDevice({ networkDevices, flash }) {
                             </div>
                             <div className="ml-4 flex-1">
                                 <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Devices</h3>
-                                <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{devices.length}</p>
-                                <p className="text-xs text-gray-500 mt-1">Semua perangkat jaringan</p>
+                                <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">{devices.length}</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Semua perangkat jaringan</p>
                             </div>
                         </div>
                     </div>
 
-                    {/* Device Types Card */}
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 h-32">
-                        <div className="flex items-center mb-3">
+                    {/* Total Up Card */}
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center">
                             <div className="flex-shrink-0">
-                                <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center">
-                                    <svg className="w-4 h-4 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14-4l2 2-2 2M5 13l-2-2 2-2" />
-                                    </svg>
-                                </div>
-                            </div>
-                            <div className="ml-3">
-                                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Jenis Perangkat</h3>
-                            </div>
-                        </div>
-                        
-                        <div className="grid grid-cols-3 gap-2">
-                            {/* Switch */}
-                            <div className="flex flex-col items-center">
-                                <div className="flex items-center mb-1">
-                                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-1"></div>
-                                    <span className="text-xs text-gray-700 dark:text-gray-300">Switches</span>
-                                </div>
-                                <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
-                                    {devices.filter(d => d.jenis === 'switch').length}
-                                </span>
-                            </div>
-
-                            {/* Access Points */}
-                            <div className="flex flex-col items-center">
-                                <div className="flex items-center mb-1">
-                                    <div className="w-2 h-2 bg-purple-500 rounded-full mr-1"></div>
-                                    <span className="text-xs text-gray-700 dark:text-gray-300">Access Point</span>
-                                </div>
-                                <span className="text-sm font-semibold text-purple-600 dark:text-purple-400">
-                                    {devices.filter(d => d.jenis === 'access point').length}
-                                </span>
-                            </div>
-
-                            {/* Network */}
-                            <div className="flex flex-col items-center">
-                                <div className="flex items-center mb-1">
-                                    <div className="w-2 h-2 bg-indigo-500 rounded-full mr-1"></div>
-                                    <span className="text-xs text-gray-700 dark:text-gray-300">Network</span>
-                                </div>
-                                <span className="text-sm font-semibold text-indigo-600 dark:text-indigo-400">
-                                    {devices.filter(d => d.jenis === 'network').length}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Status Card */}
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 h-32">
-                        <div className="flex items-center mb-3">
-                            <div className="flex-shrink-0">
-                                <div className="w-8 h-8 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
-                                    <svg className="w-4 h-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
+                                    <svg className="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
                             </div>
-                            <div className="ml-3">
-                                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Status Perangkat</h3>
+                            <div className="ml-4 flex-1">
+                                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Up</h3>
+                                <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-1">
+                                    {devices.reduce((sum, d) => sum + (d.up || 0), 0)}
+                                </p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Perangkat online</p>
                             </div>
                         </div>
-                        
-                        <div className="grid grid-cols-2 gap-4">
-                            {/* Status Up */}
-                            <div className="text-center">
-                                <div className="flex items-center justify-center mb-1">
-                                    <img src="/icons/up.png" className="w-6 h-6 mr-1" alt="Up" />
-                                    <span className="text-lg font-bold text-green-600 dark:text-green-400">
-                                        {devices.filter(d => d.status === 'up').length}
-                                    </span>
+                    </div>
+
+                    {/* Total Down Card */}
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center">
+                            <div className="flex-shrink-0">
+                                <div className="w-12 h-12 bg-red-100 dark:bg-red-900/20 rounded-lg flex items-center justify-center">
+                                    <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
                                 </div>
-                                <p className="text-xs text-gray-500">Online</p>
                             </div>
-                            
-                            {/* Status Down */}
-                            <div className="text-center">
-                                <div className="flex items-center justify-center mb-1">
-                                    <img src="/icons/down.png" className="w-6 h-6 mr-1" alt="Down" />
-                                    <span className="text-lg font-bold text-red-600 dark:text-red-400">
-                                        {devices.filter(d => d.status === 'down').length}
-                                    </span>
-                                </div>
-                                <p className="text-xs text-gray-500">Offline</p>
+                            <div className="ml-4 flex-1">
+                                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Down</h3>
+                                <p className="text-3xl font-bold text-red-600 dark:text-red-400 mt-1">
+                                    {devices.reduce((sum, d) => sum + (d.down || 0), 0)}
+                                </p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Perangkat offline</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Device Types Grid - 3 Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    {/* Switch */}
+                    <div className="bg-white dark:bg-gray-800 p-5 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Switch</p>
+                                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-1">
+                                    {devices.filter(d => d.jenis === 'switch').length}
+                                </p>
+                            </div>
+                            <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
+                                <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Access Point */}
+                    <div className="bg-white dark:bg-gray-800 p-5 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Access Point</p>
+                                <p className="text-2xl font-bold text-purple-600 dark:text-purple-400 mt-1">
+                                    {devices.filter(d => d.jenis === 'access point').length}
+                                </p>
+                            </div>
+                            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center">
+                                <svg className="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Network */}
+                    <div className="bg-white dark:bg-gray-800 p-5 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Network</p>
+                                <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mt-1">
+                                    {devices.filter(d => d.jenis === 'network').length}
+                                </p>
+                            </div>
+                            <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/20 rounded-lg flex items-center justify-center">
+                                <svg className="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                                </svg>
                             </div>
                         </div>
                     </div>
@@ -299,7 +302,16 @@ export default function NetworkDevice({ networkDevices, flash }) {
                                                 Jenis
                                             </th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                Status
+                                                Up Time
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                Down Time
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                Availability (%)
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                Kepemilikan
                                             </th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                                 Tanggal Pencatatan
@@ -337,13 +349,45 @@ export default function NetworkDevice({ networkDevices, flash }) {
                                                         );
                                                     })()}
                                                 </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                                                    {device.up || '-'}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                                                    {device.down || '-'}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    {(() => {
+                                                        const availability = parseFloat(device.availability);
+                                                        let availabilityColor = 'text-gray-500';
+                                                        let availabilityBgColor = 'bg-gray-100 dark:bg-gray-700';
+                                                        
+                                                        if (!isNaN(availability)) {
+                                                            if (availability >= 95) {
+                                                                availabilityColor = 'text-green-800 dark:text-green-400';
+                                                                availabilityBgColor = 'bg-green-100 dark:bg-green-800/20';
+                                                            } else if (availability >= 80) {
+                                                                availabilityColor = 'text-yellow-800 dark:text-yellow-400';
+                                                                availabilityBgColor = 'bg-yellow-100 dark:bg-yellow-800/20';
+                                                            } else {
+                                                                availabilityColor = 'text-red-800 dark:text-red-400';
+                                                                availabilityBgColor = 'bg-red-100 dark:bg-red-800/20';
+                                                            }
+                                                        }
+
+                                                        return (
+                                                            <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${availabilityBgColor} ${availabilityColor}`}>
+                                                                {device.availability ? `${device.availability}%` : '-'}
+                                                            </span>
+                                                        );
+                                                    })()}
+                                                </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                                        device.status === 'up' 
-                                                            ? 'bg-green-100 text-green-800 dark:bg-green-800/20 dark:text-green-400'
-                                                            : 'bg-red-100 text-red-800 dark:bg-red-800/20 dark:text-red-400'
+                                                        device.kepemilikan === 'asset' 
+                                                            ? 'bg-blue-100 text-blue-800 dark:bg-blue-800/20 dark:text-blue-400'
+                                                            : 'bg-purple-100 text-purple-800 dark:bg-purple-800/20 dark:text-purple-400'
                                                     }`}>
-                                                        {device.status === 'up' ? 'Up' : 'Down'}
+                                                        {device.kepemilikan === 'asset' ? 'Asset' : 'Sewa'}
                                                     </span>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">

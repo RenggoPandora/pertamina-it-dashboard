@@ -17,7 +17,9 @@ return new class extends Migration
             $table->string('ip_address');
             $table->date('tanggal_pencatatan');
             $table->enum('jenis', ['switch', 'access point','network']);
-            $table->enum('status', ['up', 'down'])->default('up');
+            $table->string('up')->nullable();
+            $table->string('down')->nullable();
+            $table->string('availability')->nullable();
             $table->timestamps();
 
         });
