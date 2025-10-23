@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Head, usePage, router } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import Layout from '@/components/layouts/Layout';
 
-export default function CCTV({ cctvs = [] }) {
+export default function CCTVReadiness({ cctvs = [] }) {
     const [cameras, setCameras] = useState(cctvs);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedCctv, setSelectedCctv] = useState(null);
@@ -36,66 +36,62 @@ export default function CCTV({ cctvs = [] }) {
         setShowUploadModal(false);
     };
 
+    // Calculate average availability
+    const calculateAverageAvailability = () => {
+        const validAvailabilities = cameras
+            .map(c => parseFloat(c.availability))
+            .filter(a => !isNaN(a) && a > 0);
+        
+        if (validAvailabilities.length === 0) return 0;
+        
+        const sum = validAvailabilities.reduce((acc, val) => acc + val, 0);
+        return (sum / validAvailabilities.length).toFixed(2);
+    };
+
     return (
         <>
-            <Head title="CCTV Availability - Pertamina IT Dashboard" />
+            <Head title="CCTV Readiness - Pertamina IT Dashboard" />
             <Layout 
-                activeMenuItem="CCTV Availability" 
-                title="CCTV Availability"
-                subtitle="Manage and monitor surveillance camera availability"
+                activeMenuItem="CCTV Readiness" 
+                title="CCTV Readiness"
+                subtitle="Monitor uptime, downtime, and availability metrics"
             >
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                         <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Total CCTV</h3>
                         <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{cameras.length}</p>
-                        <p className="text-xs text-gray-500">Semua kamera</p>
+                        <p className="text-xs text-gray-500">Semua perangkat</p>
                     </div>
                     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                         <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Online</h3>
                         <p className="text-3xl font-bold text-green-600 mt-2">
                             {cameras.filter(c => c.status === 'online').length}
                         </p>
-                        <p className="text-xs text-gray-500">Sedang online</p>
+                        <p className="text-xs text-gray-500">Perangkat aktif</p>
                     </div>
                     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                         <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Offline</h3>
                         <p className="text-3xl font-bold text-red-600 mt-2">
                             {cameras.filter(c => c.status === 'offline').length}
                         </p>
-                        <p className="text-xs text-gray-500">Sedang offline</p>
+                        <p className="text-xs text-gray-500">Perangkat tidak aktif</p>
                     </div>
                     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                        <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-4">Kepemilikan</h3>
-                        <div className="flex justify-between items-center">
-                            {/* Asset Section */}
-                            <div className="text-center">
-                                <p className="text-2xl font-bold text-blue-600">
-                                    {cameras.filter(c => c.kepemilikan === 'asset').length}
-                                </p>
-                                <p className="text-xs text-gray-500">Asset</p>
-                            </div>
-                            
-                            {/* Vertical Border Separator */}
-                            <div className="h-12 w-px bg-gray-200 dark:bg-gray-600"></div>
-                            
-                            {/* Sewa Section */}
-                            <div className="text-center">
-                                <p className="text-2xl font-bold text-purple-600">
-                                    {cameras.filter(c => c.kepemilikan === 'sewa').length}
-                                </p>
-                                <p className="text-xs text-gray-500">Sewa</p>
-                            </div>
-                        </div>
+                        <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Avg Availability</h3>
+                        <p className="text-3xl font-bold text-blue-600 mt-2">
+                            {calculateAverageAvailability()}%
+                        </p>
+                        <p className="text-xs text-gray-500">Rata-rata ketersediaan</p>
                     </div>
                 </div>
 
-                {/* Camera List */}
+                {/* Table Card */}
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                     <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                         <div>
-                            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Daftar CCTV</h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Kelola data kamera CCTV</p>
+                            <h3 className="text-lg font-medium text-gray-900 dark:text-white">CCTV Readiness Data</h3>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Monitoring uptime and availability metrics</p>
                         </div>
                         <div className="flex space-x-3">
                             <button
@@ -121,10 +117,12 @@ export default function CCTV({ cctvs = [] }) {
                     
                     <div className="p-6">
                         {cameras.length === 0 ? (
-                            <div className="text-center text-gray-500 dark:text-gray-400 py-8">
-                                <div className="text-6xl mb-4">📹</div>
-                                <p className="text-xl mb-2">Tidak ada CCTV ditemukan</p>
-                                <p>Tambahkan CCTV pertama Anda untuk memulai.</p>
+                            <div className="text-center py-12">
+                                <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                </svg>
+                                <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">Belum ada data</h3>
+                                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Data CCTV belum tersedia.</p>
                             </div>
                         ) : (
                             <div className="overflow-x-auto">
@@ -138,13 +136,13 @@ export default function CCTV({ cctvs = [] }) {
                                                 IP Address
                                             </th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                Status
+                                                Up Time
                                             </th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                Kepemilikan
+                                                Down Time
                                             </th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                Tanggal Pencatatan
+                                                Availability (%)
                                             </th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                                 Aksi
@@ -152,53 +150,62 @@ export default function CCTV({ cctvs = [] }) {
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                        {cameras.map((camera) => (
-                                            <tr key={camera.id}>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                                                    {camera.nama_perangkat}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                                                    <code className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-xs">
-                                                        {camera.ip_address}
-                                                    </code>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                                        camera.status === 'online' 
-                                                            ? 'bg-green-100 text-green-800 dark:bg-green-800/20 dark:text-green-400'
-                                                            : 'bg-red-100 text-red-800 dark:bg-red-800/20 dark:text-red-400'
-                                                    }`}>
-                                                        {camera.status === 'online' ? 'Online' : 'Offline'}
-                                                    </span>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                                        camera.kepemilikan === 'asset' 
-                                                            ? 'bg-blue-100 text-blue-800 dark:bg-blue-800/20 dark:text-blue-400'
-                                                            : 'bg-purple-100 text-purple-800 dark:bg-purple-800/20 dark:text-purple-400'
-                                                    }`}>
-                                                        {camera.kepemilikan === 'asset' ? 'Asset' : 'Sewa'}
-                                                    </span>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                                                    {new Date(camera.tanggal_pencatatan).toLocaleDateString()}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                    <a 
-                                                        href={route('cctv.edit', camera.id)}
-                                                        className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-3"
-                                                    >
-                                                        Ubah
-                                                    </a>
-                                                    <button
-                                                        onClick={() => openDeleteModal(camera)}
-                                                        className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                                                    >
-                                                        Hapus
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))}
+                                        {cameras.map((camera) => {
+                                            const availability = parseFloat(camera.availability);
+                                            let availabilityColor = 'text-gray-500';
+                                            let availabilityBgColor = 'bg-gray-100 dark:bg-gray-700';
+                                            
+                                            if (!isNaN(availability)) {
+                                                if (availability >= 95) {
+                                                    availabilityColor = 'text-green-800 dark:text-green-400';
+                                                    availabilityBgColor = 'bg-green-100 dark:bg-green-800/20';
+                                                } else if (availability >= 80) {
+                                                    availabilityColor = 'text-yellow-800 dark:text-yellow-400';
+                                                    availabilityBgColor = 'bg-yellow-100 dark:bg-yellow-800/20';
+                                                } else {
+                                                    availabilityColor = 'text-red-800 dark:text-red-400';
+                                                    availabilityBgColor = 'bg-red-100 dark:bg-red-800/20';
+                                                }
+                                            }
+
+                                            return (
+                                                <tr key={camera.id}>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                                                        {camera.nama_perangkat}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                                                        <code className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-xs">
+                                                            {camera.ip_address}
+                                                        </code>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                                                        {camera.up || '-'}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                                                        {camera.down || '-'}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${availabilityBgColor} ${availabilityColor}`}>
+                                                            {camera.availability ? `${camera.availability}%` : '-'}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                        <a 
+                                                            href={route('cctv.edit', camera.id)}
+                                                            className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-3"
+                                                        >
+                                                            Ubah
+                                                        </a>
+                                                        <button
+                                                            onClick={() => openDeleteModal(camera)}
+                                                            className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                                                        >
+                                                            Hapus
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
                                     </tbody>
                                 </table>
                             </div>

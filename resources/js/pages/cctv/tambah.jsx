@@ -11,6 +11,9 @@ export default function TambahCctv() {
         tanggal_pencatatan: '',
         kepemilikan: '',
         status: 'online',
+        up: '',
+        down: '',
+        availability: '',
     });
 
     const submit = (e) => {
@@ -29,7 +32,7 @@ export default function TambahCctv() {
         <>
             <Head title="Tambah CCTV - Pertamina IT Dashboard" />
             <Layout 
-                activeMenuItem="CCTV" 
+                activeMenuItem="CCTV Availability" 
                 title="Tambah CCTV"
                 subtitle="Menambahkan kamera pengawas baru"
             >
@@ -203,6 +206,60 @@ export default function TambahCctv() {
                             />
                             {errors.tanggal_pencatatan && (
                                 <p className="mt-1 text-sm text-red-600">{errors.tanggal_pencatatan}</p>
+                            )}
+                        </div>
+
+                        {/* Up */}
+                        <div>
+                            <label htmlFor="up" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Up (Waktu Aktif)
+                            </label>
+                            <input
+                                id="up"
+                                type="text"
+                                value={data.up}
+                                onChange={(e) => setData('up', e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                placeholder="Masukkan waktu aktif (opsional)"
+                            />
+                            {errors.up && (
+                                <p className="mt-1 text-sm text-red-600">{errors.up}</p>
+                            )}
+                        </div>
+
+                        {/* Down */}
+                        <div>
+                            <label htmlFor="down" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Down (Waktu Tidak Aktif)
+                            </label>
+                            <input
+                                id="down"
+                                type="text"
+                                value={data.down}
+                                onChange={(e) => setData('down', e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                placeholder="Masukkan waktu tidak aktif (opsional)"
+                            />
+                            {errors.down && (
+                                <p className="mt-1 text-sm text-red-600">{errors.down}</p>
+                            )}
+                        </div>
+
+                        {/* Availability */}
+                        <div>
+                            <label htmlFor="availability" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Availability (Ketersediaan)
+                            </label>
+                            <input
+                                id="availability"
+                                type="text"
+                                value={data.availability}
+                                onChange={(e) => setData('availability', e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                placeholder="Masukkan persentase ketersediaan (opsional)"
+                            />
+                            {errors.availability && (
+                                <p className="mt-1 text-sm text-red-600">{errors.availability}</p>
                             )}
                         </div>
 

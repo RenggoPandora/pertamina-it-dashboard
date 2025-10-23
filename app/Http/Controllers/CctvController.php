@@ -17,6 +17,15 @@ class CctvController extends Controller
         ]);
     }
 
+    public function readiness()
+    {
+        $cctvs = Cctv::all();
+        
+        return Inertia::render('cctv/readiness', [
+            'cctvs' => $cctvs,
+        ]);
+    }
+
     public function create()
     {
         return Inertia::render('cctv/tambah');
@@ -30,6 +39,9 @@ class CctvController extends Controller
             'tanggal_pencatatan' => 'required|date',
             'kepemilikan' => 'required|in:asset,sewa',
             'status' => 'required|in:online,offline',
+            'up' => 'nullable|string',
+            'down' => 'nullable|string',
+            'availability' => 'nullable|string',
         ]);
 
         Cctv::create($validated);
@@ -59,6 +71,9 @@ class CctvController extends Controller
             'tanggal_pencatatan' => 'required|date',
             'kepemilikan' => 'required|in:asset,sewa',
             'status' => 'required|in:online,offline',
+            'up' => 'nullable|string',
+            'down' => 'nullable|string',
+            'availability' => 'nullable|string',
         ]);
 
         $cctv->update($validated);

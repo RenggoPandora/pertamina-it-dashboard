@@ -17,9 +17,15 @@ class Cctv extends Model
         'tanggal_pencatatan',
         'kepemilikan',
         'status',
+        'up',
+        'down',
+        'availability',
     ];
 
     protected $casts = [
         'tanggal_pencatatan' => 'date',
+        'up' => 'string',
+        'down' => 'string',
+        'availability' => 'string',
     ];
 }

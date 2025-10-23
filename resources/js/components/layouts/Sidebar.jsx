@@ -23,7 +23,7 @@ export default function Sidebar({ activeItem }) {
     ];
 
     const cctvSubmenu = [
-        { name: 'CCTV Readiness', href: '/cctv' },
+        { name: 'CCTV Readiness', href: '/cctv/readiness' },
         { name: 'CCTV Availability', href: '/cctv' },
     ];
 

@@ -58,6 +58,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     
     // CCTV resource routes
+    Route::get('cctv/readiness', [CctvController::class, 'readiness'])->name('cctv.readiness');
     Route::resource('cctv', CctvController::class);
 
     // Ticket resource routes
