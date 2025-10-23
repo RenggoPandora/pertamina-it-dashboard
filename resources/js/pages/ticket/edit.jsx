@@ -13,9 +13,11 @@ export default function EditTicket({ ticket }) {
     };
 
     const { data, setData, put, processing, errors } = useForm({
-        support_company: ticket.support_company,
-        req_number: ticket.req_number,
-        status: ticket.status,
+        customer_fullname: ticket.customer_fullname || '',
+        assignee_name: ticket.assignee_name || '',
+        summary: ticket.summary || '',
+        tanggal_pencatatan: formatDateForInput(ticket.tanggal_pencatatan),
+        status: ticket.status || 'assigned',
     });
 
     const submit = (e) => {
@@ -92,41 +94,77 @@ export default function EditTicket({ ticket }) {
                     </div>
 
                     <form onSubmit={submit} className="p-6 space-y-6">
-                        {/* Support Company */}
+                        {/* Customer Fullname */}
                         <div>
-                            <label htmlFor="support_company" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Support Company <span className="text-red-500">*</span>
+                            <label htmlFor="customer_fullname" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Customer Fullname <span className="text-red-500">*</span>
                             </label>
                             <input
-                                id="support_company"
+                                id="customer_fullname"
                                 type="text"
-                                value={data.support_company}
-                                onChange={(e) => setData('support_company', e.target.value)}
+                                value={data.customer_fullname}
+                                onChange={(e) => setData('customer_fullname', e.target.value)}
                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                                placeholder="Masukkan nama perusahaan support"
+                                placeholder="Masukkan nama lengkap customer"
                                 required
                             />
-                            {errors.support_company && (
-                                <p className="mt-1 text-sm text-red-600">{errors.support_company}</p>
+                            {errors.customer_fullname && (
+                                <p className="mt-1 text-sm text-red-600">{errors.customer_fullname}</p>
                             )}
                         </div>
 
-                        {/* Request Number */}
+                        {/* Assignee Name */}
                         <div>
-                            <label htmlFor="req_number" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Nomor Request <span className="text-red-500">*</span>
+                            <label htmlFor="assignee_name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Assignee Name
                             </label>
                             <input
-                                id="req_number"
+                                id="assignee_name"
                                 type="text"
-                                value={data.req_number}
-                                onChange={(e) => setData('req_number', e.target.value)}
+                                value={data.assignee_name}
+                                onChange={(e) => setData('assignee_name', e.target.value)}
                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                                placeholder="Masukkan nomor request"
+                                placeholder="Masukkan nama petugas yang ditugaskan"
+                            />
+                            {errors.assignee_name && (
+                                <p className="mt-1 text-sm text-red-600">{errors.assignee_name}</p>
+                            )}
+                        </div>
+
+                        {/* Summary */}
+                        <div>
+                            <label htmlFor="summary" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Summary <span className="text-red-500">*</span>
+                            </label>
+                            <textarea
+                                id="summary"
+                                value={data.summary}
+                                onChange={(e) => setData('summary', e.target.value)}
+                                rows="4"
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                placeholder="Masukkan ringkasan/deskripsi ticket"
                                 required
                             />
-                            {errors.req_number && (
-                                <p className="mt-1 text-sm text-red-600">{errors.req_number}</p>
+                            {errors.summary && (
+                                <p className="mt-1 text-sm text-red-600">{errors.summary}</p>
+                            )}
+                        </div>
+
+                        {/* Tanggal Pencatatan */}
+                        <div>
+                            <label htmlFor="tanggal_pencatatan" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Tanggal Pencatatan <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                                id="tanggal_pencatatan"
+                                type="date"
+                                value={data.tanggal_pencatatan}
+                                onChange={(e) => setData('tanggal_pencatatan', e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                required
+                            />
+                            {errors.tanggal_pencatatan && (
+                                <p className="mt-1 text-sm text-red-600">{errors.tanggal_pencatatan}</p>
                             )}
                         </div>
 
@@ -142,11 +180,11 @@ export default function EditTicket({ ticket }) {
                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                                 required
                             >
-                                <option value="closed">Closed</option>
-                                <option value="completed">Completed</option>
+                                <option value="assigned">Assigned</option>
                                 <option value="pending">Pending</option>
-                                <option value="rejected">Rejected</option>
                                 <option value="resolved">Resolved</option>
+                                <option value="completed">Completed</option>
+                                <option value="closed">Closed</option>
                             </select>
                             {errors.status && (
                                 <p className="mt-1 text-sm text-red-600">{errors.status}</p>

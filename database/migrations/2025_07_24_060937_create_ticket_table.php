@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('ticket', function (Blueprint $table) {
             $table->id();
-            $table->string('support_company');
-            $table->string('req_number');
-            $table->enum('status', ['closed', 'completed', 'pending', 'rejected', 'resolved'])->default('pending');
+            $table->string('customer_fullname');
+            $table->string('assignee_name')->nullable();
+            $table->text('summary');
+            $table->date('tanggal_pencatatan');
+            $table->enum('status', ['assigned', 'closed', 'pending', 'resolved', 'completed'])->default('assigned');
             $table->timestamps();
         });
     }

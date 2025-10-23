@@ -47,87 +47,114 @@ export default function Index() {
       <Head title="Ticket - Pertamina IT Dashboard" />
       <Layout activeMenuItem="Ticket" title="Ticket Management" subtitle="Manage support tickets and service requests">
         
-        {/* Statistik - Single Row with 5 Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
-          {/* Total Tickets Card - Full Size */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 h-32">
-            <div className="flex items-center h-full">
-              <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-gray-100 dark:bg-gray-900/20 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
-                  </svg>
+        {/* Stats Grid - 2 Rows */}
+        <div className="mb-8 space-y-6">
+          {/* Row 1: Total & Completed - 2 Columns */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Total Tickets Card */}
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className="w-12 h-12 bg-gray-100 dark:bg-gray-900/20 rounded-lg flex items-center justify-center">
+                    <svg className="w-6 h-6 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                    </svg>
+                  </div>
+                </div>
+                <div className="ml-4 flex-1">
+                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Tickets</h3>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">{tickets.length}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Semua ticket yang terdaftar</p>
                 </div>
               </div>
-              <div className="ml-4 flex-1">
-                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Tickets</h3>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">{tickets.length}</p>
-                <p className="text-xs text-gray-500 mt-1">All tickets</p>
+            </div>
+
+            {/* Completed Card */}
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
+                    <svg className="w-6 h-6 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                </div>
+                <div className="ml-4 flex-1">
+                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Completed</h3>
+                  <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-1">{tickets.filter(t => t.status === 'completed').length}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Ticket yang selesai</p>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Status Cards - Compact Size with Icon Left, Text Top, Number Right */}
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 h-32">
-            <div className="flex items-center h-full">
-              <div className="flex-shrink-0">
-                <div className="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-yellow-600 dark:text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                  </svg>
+          {/* Row 2: Assigned, Pending, Resolved, Closed - 4 Columns */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Assigned Card */}
+            <div className="bg-white dark:bg-gray-800 p-5 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
+                    <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
+                    </svg>
+                  </div>
                 </div>
-              </div>
-              <div className="ml-3 flex-1">
-                <h3 className="text-xs font-medium text-gray-600 dark:text-gray-400">Pending</h3>
-                <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mt-1">{tickets.filter(t => t.status === 'pending').length}</p>
+                <div className="ml-4 flex-1">
+                  <h3 className="text-xs font-medium text-gray-600 dark:text-gray-400">Assigned</h3>
+                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-1">{tickets.filter(t => t.status === 'assigned').length}</p>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 h-32">
-            <div className="flex items-center h-full">
-              <div className="flex-shrink-0">
-                <div className="w-10 h-10 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
+            {/* Pending Card */}
+            <div className="bg-white dark:bg-gray-800 p-5 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg flex items-center justify-center">
+                    <svg className="w-5 h-5 text-yellow-600 dark:text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                  </div>
                 </div>
-              </div>
-              <div className="ml-3 flex-1">
-                <h3 className="text-xs font-medium text-gray-600 dark:text-gray-400">Completed</h3>
-                <p className="text-2xl font-bold text-green-600 dark:text-green-400 mt-1">{tickets.filter(t => t.status === 'completed').length}</p>
+                <div className="ml-4 flex-1">
+                  <h3 className="text-xs font-medium text-gray-600 dark:text-gray-400">Pending</h3>
+                  <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mt-1">{tickets.filter(t => t.status === 'pending').length}</p>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 h-32">
-            <div className="flex items-center h-full">
-              <div className="flex-shrink-0">
-                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
+            {/* Resolved Card */}
+            <div className="bg-white dark:bg-gray-800 p-5 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center">
+                    <svg className="w-5 h-5 text-purple-600 dark:text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  </div>
                 </div>
-              </div>
-              <div className="ml-3 flex-1">
-                <h3 className="text-xs font-medium text-gray-600 dark:text-gray-400">Resolved</h3>
-                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-1">{tickets.filter(t => t.status === 'resolved').length}</p>
+                <div className="ml-4 flex-1">
+                  <h3 className="text-xs font-medium text-gray-600 dark:text-gray-400">Resolved</h3>
+                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400 mt-1">{tickets.filter(t => t.status === 'resolved').length}</p>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 h-32">
-            <div className="flex items-center h-full">
-              <div className="flex-shrink-0">
-                <div className="w-10 h-10 bg-red-100 dark:bg-red-900/20 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-red-600 dark:text-red-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
+            {/* Closed Card */}
+            <div className="bg-white dark:bg-gray-800 p-5 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className="w-10 h-10 bg-gray-100 dark:bg-gray-900/20 rounded-lg flex items-center justify-center">
+                    <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </div>
                 </div>
-              </div>
-              <div className="ml-3 flex-1">
-                <h3 className="text-xs font-medium text-gray-600 dark:text-gray-400">Rejected</h3>
-                <p className="text-2xl font-bold text-red-600 dark:text-red-400 mt-1">{tickets.filter(t => t.status === 'rejected').length}</p>
+                <div className="ml-4 flex-1">
+                  <h3 className="text-xs font-medium text-gray-600 dark:text-gray-400">Closed</h3>
+                  <p className="text-2xl font-bold text-gray-600 dark:text-gray-400 mt-1">{tickets.filter(t => t.status === 'closed').length}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -250,22 +277,30 @@ export default function Index() {
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                   <thead className="bg-gray-50 dark:bg-gray-700">
                     <tr>
-                      <Th>Support Company</Th>
-                      <Th>Nomor Request</Th>
+                      <Th>ID Ticket</Th>
+                      <Th>Customer Fullname</Th>
+                      <Th>Assignee Name</Th>
+                      <Th>Summary</Th>
+                      <Th>Tanggal Pencatatan</Th>
                       <Th>Status</Th>
-                      <Th>Dibuat Pada</Th>
                       <Th>Aksi</Th>
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                     {tickets.map((ticket) => (
                       <tr key={ticket.id}>
-                        <Td>{ticket.support_company}</Td>
-                        <Td>{ticket.req_number}</Td>
+                        <Td>{ticket.id}</Td>
+                        <Td>{ticket.customer_fullname}</Td>
+                        <Td>{ticket.assignee_name || '-'}</Td>
+                        <Td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
+                          <div className="max-w-xs truncate" title={ticket.summary}>
+                            {ticket.summary}
+                          </div>
+                        </Td>
+                        <Td>{ticket.tanggal_pencatatan ? new Date(ticket.tanggal_pencatatan).toLocaleDateString() : '-'}</Td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <StatusBadge status={ticket.status} />
                         </td>
-                        <Td>{ticket.created_at ? new Date(ticket.created_at).toLocaleString() : '-'}</Td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <a
                             href={route('ticket.edit', ticket.id)}
@@ -303,7 +338,7 @@ export default function Index() {
                 <div>
                   <h2 className="text-lg font-semibold text-gray-900">Hapus Ticket</h2>
                   <p className="text-sm text-gray-600 mt-1">
-                    Apakah Anda yakin ingin menghapus ticket <strong>{selectedTicket.req_number}</strong>? Tindakan ini tidak dapat dibatalkan.
+                    Apakah Anda yakin ingin menghapus ticket dari <strong>{selectedTicket.customer_fullname}</strong>? Tindakan ini tidak dapat dibatalkan.
                   </p>
                 </div>
               </div>
@@ -360,17 +395,17 @@ function Td({ children }) {
 
 function StatusBadge({ status }) {
   const classes = {
-    closed: 'bg-pink-200 text-pink-800 dark:bg-pink-700 dark:text-pink-200',
-    completed: 'bg-green-100 text-green-800 dark:bg-green-800/20 dark:text-green-400',
+    assigned: 'bg-blue-100 text-blue-800 dark:bg-blue-800/20 dark:text-blue-400',
     pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800/20 dark:text-yellow-400',
-    rejected: 'bg-red-100 text-red-800 dark:bg-red-800/20 dark:text-red-400',
-    resolved: 'bg-blue-100 text-blue-800 dark:bg-blue-800/20 dark:text-blue-400',
+    resolved: 'bg-purple-100 text-purple-800 dark:bg-purple-800/20 dark:text-purple-400',
+    completed: 'bg-green-100 text-green-800 dark:bg-green-800/20 dark:text-green-400',
+    closed: 'bg-gray-100 text-gray-800 dark:bg-gray-800/20 dark:text-gray-400',
   };
 
   const label = status.charAt(0).toUpperCase() + status.slice(1);
 
   return (
-    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${classes[status]}`}>
+    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${classes[status] || classes.pending}`}>
       {label}
     </span>
   );

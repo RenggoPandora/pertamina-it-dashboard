@@ -26,9 +26,11 @@ class TicketController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'support_company' => 'required|string|max:255',
-            'req_number' => 'required|string|max:255',
-            'status' => 'required|in:closed,completed,pending,rejected,resolved',
+            'customer_fullname' => 'required|string|max:255',
+            'assignee_name' => 'nullable|string|max:255',
+            'summary' => 'required|string',
+            'tanggal_pencatatan' => 'required|date',
+            'status' => 'required|in:assigned,closed,pending,resolved,completed',
         ]);
 
         Ticket::create($request->all());
@@ -46,9 +48,11 @@ class TicketController extends Controller
     public function update(Request $request, Ticket $ticket)
     {
         $request->validate([
-            'support_company' => 'required|string|max:255',
-            'req_number' => 'required|string|max:255',
-            'status' => 'required|in:closed,completed,pending,rejected,resolved',
+            'customer_fullname' => 'required|string|max:255',
+            'assignee_name' => 'nullable|string|max:255',
+            'summary' => 'required|string',
+            'tanggal_pencatatan' => 'required|date',
+            'status' => 'required|in:assigned,closed,pending,resolved,completed',
         ]);
 
         $ticket->update($request->all());

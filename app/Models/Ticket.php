@@ -12,8 +12,14 @@ class Ticket extends Model
     protected $table = 'ticket'; // sesuai dengan nama tabel di migration
 
     protected $fillable = [
-        'support_company',
-        'req_number',
+        'customer_fullname',
+        'assignee_name',
+        'summary',
+        'tanggal_pencatatan',
         'status',
+    ];
+
+    protected $casts = [
+        'tanggal_pencatatan' => 'date',
     ];
 }
