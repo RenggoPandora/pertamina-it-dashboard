@@ -3,6 +3,7 @@ import { Head, router } from '@inertiajs/react';
 import Layout from '@/components/layouts/Layout';
 import MUIDonutChart from '@/components/charts/MUIDonutChart';
 import MUIBarChart from '@/components/charts/MUIBarChart';
+import DateRangeFilter from '@/components/DateRangeFilter';
 
 export default function Overview({ 
     hpbocStats, 
@@ -15,20 +16,30 @@ export default function Overview({
     filters 
 }) {
 
-    // Fungsi untuk menangani perubahan filter
+    // Fungsi untuk menangani perubahan filter minggu
     const handleFilterChange = (key, value) => {
-        // Hapus filter lain saat filter baru diterapkan
+        // Hapus filter tanggal saat filter minggu diterapkan
         const newFilters = { [key]: value };
 
-        router.get(route('dashboard'), newFilters, { // Ganti 'dashboard' dengan nama route Anda jika berbeda
+        router.get(route('dashboard'), newFilters, {
             preserveState: true,
+            replace: true,
+        });
+    };
+
+    // Fungsi untuk menangani filter date range
+    const handleDateFilter = ({ startDate, endDate }) => {
+        router.get(route('dashboard'), {
+            start_date: startDate,
+            end_date: endDate
+        }, {
             replace: true,
         });
     };
     
     // Ambil nilai filter aktif dari prop 'filters'
-    const selectedWeek = filters.week;
-    const selectedDate = filters.date;
+    const selectedWeek = filters?.week;
+    const selectedDate = filters?.date;
 
     return (
         <>
@@ -115,21 +126,21 @@ export default function Overview({
                             // Gunakan selectedWeek dari prop untuk menandai tombol aktif
                             selectedWeek == week
                                 ? 'bg-blue-600 text-white border-blue-600 shadow'
-                                : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50 cursor-pointer'
+                                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-blue-50 dark:hover:bg-gray-700 cursor-pointer'
                             }`}
                         >
                             Minggu ke-{week}
                         </button>
                         ))}
                     </div>
-                    <div className="flex items-center space-x-4">
-                        <input
-                            type="date"
-                            // Gunakan selectedDate dari prop. Jika null, tampilkan string kosong.
-                            value={selectedDate || ''}
-                            onChange={(e) => handleFilterChange('date', e.target.value)}
-                            className="px-3 py-2 rounded-md border border-gray-300 text-sm text-gray-700 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    <div className="flex items-center space-x-3">
+                        {/* Date Range Filter */}
+                        <DateRangeFilter 
+                            onFilter={handleDateFilter}
+                            defaultStartDate={filters?.start_date}
+                            defaultEndDate={filters?.end_date}
                         />
+                        
                         <button className="flex items-center space-x-2 px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow">
                             <span>Export</span>
                             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

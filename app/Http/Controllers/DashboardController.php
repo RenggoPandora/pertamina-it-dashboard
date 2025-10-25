@@ -21,15 +21,22 @@ class DashboardController extends Controller
         $request->validate([
             'week' => 'nullable|integer|min:1|max:5',
             'date' => 'nullable|date_format:Y-m-d',
+            'start_date' => 'nullable|date_format:Y-m-d',
+            'end_date' => 'nullable|date_format:Y-m-d',
         ]);
 
-        $filters = $request->only(['week', 'date']);
+        $filters = $request->only(['week', 'date', 'start_date', 'end_date']);
         $startDate = null;
         $endDate = null;
         $selectedDate = null; // Inisialisasi variabel untuk tanggal yang dipilih
 
-        // Logika filter: Prioritaskan 'date' jika ada
-        if ($request->filled('date')) {
+        // Logika filter: Prioritaskan 'start_date' & 'end_date' (Date Range Filter)
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $startDate = Carbon::createFromFormat('Y-m-d', $request->input('start_date'));
+            $endDate = Carbon::createFromFormat('Y-m-d', $request->input('end_date'));
+        }
+        // Jika date range tidak ada, cek filter 'date' tunggal
+        elseif ($request->filled('date')) {
             $selectedDate = Carbon::createFromFormat('Y-m-d', $request->input('date'));
             
             // Hitung nomor minggu dari tanggal yang dipilih agar UI bisa update
