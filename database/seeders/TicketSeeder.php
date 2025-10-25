@@ -1,0 +1,186 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
+class TicketSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        $tickets = [
+            [
+                'customer_fullname' => 'Ahmad Rizki Pratama',
+                'assignee_name' => 'Budi Santoso',
+                'summary' => 'Komputer tidak bisa menyala, lampu indikator power tidak menyala sama sekali. Sudah dicoba dipindah ke stop kontak lain tetap sama.',
+                'tanggal_pencatatan' => Carbon::now()->subDays(5)->format('Y-m-d'),
+                'status' => 'completed',
+                'created_by' => 1,
+                'updated_by' => 1,
+                'created_at' => Carbon::now()->subDays(5),
+                'updated_at' => Carbon::now()->subDays(1),
+            ],
+            [
+                'customer_fullname' => 'Siti Nurhaliza',
+                'assignee_name' => 'Agus Hermawan',
+                'summary' => 'Printer tidak bisa print, muncul error "Paper Jam" padahal tidak ada kertas yang nyangkut.',
+                'tanggal_pencatatan' => Carbon::now()->subDays(4)->format('Y-m-d'),
+                'status' => 'resolved',
+                'created_by' => 1,
+                'updated_by' => 1,
+                'created_at' => Carbon::now()->subDays(4),
+                'updated_at' => Carbon::now()->subDays(2),
+            ],
+            [
+                'customer_fullname' => 'Eko Prasetyo',
+                'assignee_name' => 'Budi Santoso',
+                'summary' => 'Koneksi internet sangat lambat, loading website lebih dari 5 menit. Sudah restart router tetap lambat.',
+                'tanggal_pencatatan' => Carbon::now()->subDays(3)->format('Y-m-d'),
+                'status' => 'assigned',
+                'created_by' => 1,
+                'updated_by' => 1,
+                'created_at' => Carbon::now()->subDays(3),
+                'updated_at' => Carbon::now()->subDays(3),
+            ],
+            [
+                'customer_fullname' => 'Dewi Lestari',
+                'assignee_name' => null,
+                'summary' => 'Email tidak bisa dikirim, muncul error "Authentication Failed". Sudah coba ganti password tetap tidak bisa.',
+                'tanggal_pencatatan' => Carbon::now()->subDays(2)->format('Y-m-d'),
+                'status' => 'pending',
+                'created_by' => 1,
+                'updated_by' => 1,
+                'created_at' => Carbon::now()->subDays(2),
+                'updated_at' => Carbon::now()->subDays(2),
+            ],
+            [
+                'customer_fullname' => 'Rina Kusuma',
+                'assignee_name' => 'Agus Hermawan',
+                'summary' => 'Aplikasi SAP tidak bisa login, muncul pesan "User Locked". Mohon bantuan untuk unlock user.',
+                'tanggal_pencatatan' => Carbon::now()->subDays(1)->format('Y-m-d'),
+                'status' => 'assigned',
+                'created_by' => 1,
+                'updated_by' => 1,
+                'created_at' => Carbon::now()->subDays(1),
+                'updated_at' => Carbon::now()->subDays(1),
+            ],
+            [
+                'customer_fullname' => 'Hendri Wijaya',
+                'assignee_name' => 'Budi Santoso',
+                'summary' => 'Layar monitor berkedip-kedip dan kadang mati sendiri. Sudah coba ganti kabel VGA tetap sama.',
+                'tanggal_pencatatan' => Carbon::now()->format('Y-m-d'),
+                'status' => 'pending',
+                'created_by' => 1,
+                'updated_by' => 1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'customer_fullname' => 'Fitriani Rahayu',
+                'assignee_name' => 'Agus Hermawan',
+                'summary' => 'CCTV di area parkir tidak merekam, sudah cek storage masih ada space yang cukup.',
+                'tanggal_pencatatan' => Carbon::now()->format('Y-m-d'),
+                'status' => 'assigned',
+                'created_by' => 1,
+                'updated_by' => 1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'customer_fullname' => 'Bambang Supriyanto',
+                'assignee_name' => 'Budi Santoso',
+                'summary' => 'Telepon IP tidak ada nada sambung, lampu indikator menyala tetapi tidak bisa digunakan untuk telepon.',
+                'tanggal_pencatatan' => Carbon::now()->subDays(6)->format('Y-m-d'),
+                'status' => 'closed',
+                'created_by' => 1,
+                'updated_by' => 1,
+                'created_at' => Carbon::now()->subDays(6),
+                'updated_at' => Carbon::now()->subDays(3),
+            ],
+            [
+                'customer_fullname' => 'Lina Marlina',
+                'assignee_name' => null,
+                'summary' => 'Keyboard dan mouse wireless tidak terdeteksi, sudah ganti baterai tetap tidak berfungsi.',
+                'tanggal_pencatatan' => Carbon::now()->format('Y-m-d'),
+                'status' => 'pending',
+                'created_by' => 1,
+                'updated_by' => 1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'customer_fullname' => 'Rudi Hartono',
+                'assignee_name' => 'Agus Hermawan',
+                'summary' => 'Sistem POS error, tidak bisa proses transaksi. Muncul pesan "Database Connection Lost".',
+                'tanggal_pencatatan' => Carbon::now()->subDays(7)->format('Y-m-d'),
+                'status' => 'completed',
+                'created_by' => 1,
+                'updated_by' => 1,
+                'created_at' => Carbon::now()->subDays(7),
+                'updated_at' => Carbon::now()->subDays(4),
+            ],
+            [
+                'customer_fullname' => 'Maya Sari',
+                'assignee_name' => 'Budi Santoso',
+                'summary' => 'Laptop sering hang dan restart sendiri ketika membuka aplikasi Microsoft Office.',
+                'tanggal_pencatatan' => Carbon::now()->subDays(1)->format('Y-m-d'),
+                'status' => 'assigned',
+                'created_by' => 1,
+                'updated_by' => 1,
+                'created_at' => Carbon::now()->subDays(1),
+                'updated_at' => Carbon::now()->subDays(1),
+            ],
+            [
+                'customer_fullname' => 'Tono Sugiarto',
+                'assignee_name' => null,
+                'summary' => 'VPN tidak bisa connect dari rumah, muncul error "Connection Timeout". Internet di rumah normal.',
+                'tanggal_pencatatan' => Carbon::now()->format('Y-m-d'),
+                'status' => 'pending',
+                'created_by' => 1,
+                'updated_by' => 1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'customer_fullname' => 'Ani Suryani',
+                'assignee_name' => 'Agus Hermawan',
+                'summary' => 'Scanner tidak terdeteksi oleh komputer, sudah install ulang driver tetap tidak bisa.',
+                'tanggal_pencatatan' => Carbon::now()->subDays(8)->format('Y-m-d'),
+                'status' => 'resolved',
+                'created_by' => 1,
+                'updated_by' => 1,
+                'created_at' => Carbon::now()->subDays(8),
+                'updated_at' => Carbon::now()->subDays(5),
+            ],
+            [
+                'customer_fullname' => 'Hendra Gunawan',
+                'assignee_name' => 'Budi Santoso',
+                'summary' => 'Access point WiFi di ruang meeting tidak menyala, sudah coba reset tetap tidak berfungsi.',
+                'tanggal_pencatatan' => Carbon::now()->subDays(2)->format('Y-m-d'),
+                'status' => 'assigned',
+                'created_by' => 1,
+                'updated_by' => 1,
+                'created_at' => Carbon::now()->subDays(2),
+                'updated_at' => Carbon::now()->subDays(2),
+            ],
+            [
+                'customer_fullname' => 'Sri Wahyuni',
+                'assignee_name' => 'Agus Hermawan',
+                'summary' => 'UPS berbunyi alarm terus menerus dan indikator menunjukkan baterai low padahal PLN normal.',
+                'tanggal_pencatatan' => Carbon::now()->subDays(10)->format('Y-m-d'),
+                'status' => 'closed',
+                'created_by' => 1,
+                'updated_by' => 1,
+                'created_at' => Carbon::now()->subDays(10),
+                'updated_at' => Carbon::now()->subDays(7),
+            ],
+        ];
+
+        DB::table('ticket')->insert($tickets);
+    }
+}

@@ -39,7 +39,7 @@ class TelephoneSeeder extends Seeder
                 'nama_pic' => 'Ahmad Fauzi',
                 'jumlah' => 8,
                 'tanggal_pencatatan' => '2024-03-10',
-                'status' => 'on',
+                'status' => 'maintenance',
                 'site_id' => $sites->random()->id,
             ],
             [
@@ -60,7 +60,7 @@ class TelephoneSeeder extends Seeder
                 'nama_pic' => 'Maya Sari',
                 'jumlah' => 4,
                 'tanggal_pencatatan' => '2024-06-22',
-                'status' => 'on',
+                'status' => 'maintenance',
                 'site_id' => $sites->random()->id,
             ],
             [
@@ -74,7 +74,7 @@ class TelephoneSeeder extends Seeder
                 'nama_pic' => 'Linda Wijaya',
                 'jumlah' => 1,
                 'tanggal_pencatatan' => '2024-08-14',
-                'status' => 'off',
+                'status' => 'maintenance',
                 'site_id' => $sites->random()->id,
             ],
         ];

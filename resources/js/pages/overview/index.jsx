@@ -94,8 +94,11 @@ export default function Overview({
                                 <p className="text-sm opacity-90">Total Tickets</p>
                             </div>
                             <div className="text-right text-xs opacity-75">
+                                <div>Assigned: {ticketStats?.assigned || 0}</div>
                                 <div>Pending: {ticketStats?.pending || 0}</div>
                                 <div>Completed: {ticketStats?.completed || 0}</div>
+                                <div>Resolved: {ticketStats?.resolved || 0}</div>
+                                <div>Closed: {ticketStats?.closed || 0}</div>
                             </div>
                         </div>
                     </div>
@@ -147,28 +150,40 @@ export default function Overview({
                         <div className="flex justify-center">
                             <MUIBarChart
                                 data={[
-                                    { label: 'Pending', value: ticketStats?.pending || 0, color: '#3b82f6' },
+                                    { label: 'Assigned', value: ticketStats?.assigned || 0, color: '#3b82f6' },
+                                    { label: 'Pending', value: ticketStats?.pending || 0, color: '#f59e0b' },
+                                    { label: 'Resolved', value: ticketStats?.resolved || 0, color: '#8b5cf6' },
                                     { label: 'Completed', value: ticketStats?.completed || 0, color: '#10b981' },
-                                    { label: 'Closed', value: ticketStats?.closed || 0, color: '#8b5cf6' },
-                                    { label: 'Rejected', value: ticketStats?.rejected || 0, color: '#f97316' },
-                                    { label: 'Resolved', value: ticketStats?.resolved || 0, color: '#06b6d4' },
+                                    { label: 'Closed', value: ticketStats?.closed || 0, color: '#6b7280' },
                                 ]}
                                 height={200}
-                                width={400}
+                                width={380}
                             />
                         </div>
-                        <div className="flex justify-center mt-4 space-x-4 text-xs">
-                            <div className="flex items-center">
-                                <div className="w-3 h-3 bg-blue-500 rounded mr-1"></div>
-                                <span>Pending ({ticketStats?.pending || 0})</span>
+                        <div className="mt-4">
+                            <div className="flex justify-center space-x-6 text-xs mb-2">
+                                <div className="flex items-center">
+                                    <div className="w-3 h-3 bg-blue-500 rounded mr-1"></div>
+                                    <span>Assigned ({ticketStats?.assigned || 0})</span>
+                                </div>
+                                <div className="flex items-center">
+                                    <div className="w-3 h-3 bg-yellow-500 rounded mr-1"></div>
+                                    <span>Pending ({ticketStats?.pending || 0})</span>
+                                </div>
+                                <div className="flex items-center">
+                                    <div className="w-3 h-3 bg-purple-500 rounded mr-1"></div>
+                                    <span>Resolved ({ticketStats?.resolved || 0})</span>
+                                </div>
                             </div>
-                            <div className="flex items-center">
-                                <div className="w-3 h-3 bg-green-500 rounded mr-1"></div>
-                                <span>Completed ({ticketStats?.completed || 0})</span>
-                            </div>
-                            <div className="flex items-center">
-                                <div className="w-3 h-3 bg-purple-500 rounded mr-1"></div>
-                                <span>Closed ({ticketStats?.closed || 0})</span>
+                            <div className="flex justify-center space-x-6 text-xs">
+                                <div className="flex items-center">
+                                    <div className="w-3 h-3 bg-green-500 rounded mr-1"></div>
+                                    <span>Completed ({ticketStats?.completed || 0})</span>
+                                </div>
+                                <div className="flex items-center">
+                                    <div className="w-3 h-3 bg-gray-500 rounded mr-1"></div>
+                                    <span>Closed ({ticketStats?.closed || 0})</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -267,65 +282,77 @@ export default function Overview({
                     {/* PC Device Distribution Chart */}
                     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                         <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">PC Device Distribution</h3>
-                        <div className="flex items-center justify-center h-48">
-                            <MUIDonutChart
-                                data={[
-                                    { label: 'Desktop', value: pcDeviceStats?.desktop || 0, color: '#3b82f6' },
-                                    { label: 'Notebook', value: pcDeviceStats?.notebook || 0, color: '#10b981' },
-                                    { label: 'Printer', value: pcDeviceStats?.printer || 0, color: '#f59e0b' },
-                                ]}
-                                centerText={{
-                                    value: pcDeviceStats?.total || 0,
-                                    label: 'Total'
-                                }}
-                                size={200}
-                            />
-                            <MUIBarChart
-                                data={[
-                                    { label: 'MPS', value: pcDeviceStats?.mps || 0, color: '#8b5cf6' },
-                                    { label: 'SM5', value: pcDeviceStats?.sm5 || 0, color: '#ec4899' },
-                                ]}
-                                layout="horizontal"
-                                height={200}
-                                width={450}
-                                seriesLabel="Alokasi"
-                            />
-                        </div>
-                        <div className="space-y-2 text-sm">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center">
-                                    <div className="w-3 h-3 bg-blue-500 rounded mr-2"></div>
-                                    <span>Desktop</span>
+                        <div className="grid grid-cols-2 gap-4">
+                            {/* Left: Donut Chart */}
+                            <div>
+                                <div className="flex items-center justify-center mb-4">
+                                    <MUIDonutChart
+                                        data={[
+                                            { label: 'Desktop', value: pcDeviceStats?.desktop || 0, color: '#3b82f6' },
+                                            { label: 'Notebook', value: pcDeviceStats?.notebook || 0, color: '#10b981' },
+                                            { label: 'Printer', value: pcDeviceStats?.printer || 0, color: '#f59e0b' },
+                                        ]}
+                                        centerText={{
+                                            value: pcDeviceStats?.total || 0,
+                                            label: 'Total'
+                                        }}
+                                        size={180}
+                                    />
                                 </div>
-                                <span>{pcDeviceStats?.desktop || 0}</span>
+                                <div className="space-y-2 text-sm">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center">
+                                            <div className="w-3 h-3 bg-blue-500 rounded mr-2"></div>
+                                            <span>Desktop</span>
+                                        </div>
+                                        <span className="font-semibold">{pcDeviceStats?.desktop || 0}</span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center">
+                                            <div className="w-3 h-3 bg-green-500 rounded mr-2"></div>
+                                            <span>Notebook</span>
+                                        </div>
+                                        <span className="font-semibold">{pcDeviceStats?.notebook || 0}</span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center">
+                                            <div className="w-3 h-3 bg-yellow-500 rounded mr-2"></div>
+                                            <span>Printer</span>
+                                        </div>
+                                        <span className="font-semibold">{pcDeviceStats?.printer || 0}</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center">
-                                    <div className="w-3 h-3 bg-green-500 rounded mr-2"></div>
-                                    <span>Notebook</span>
+
+                            {/* Right: Bar Chart */}
+                            <div>
+                                <div className="flex items-center justify-center mb-4">
+                                    <MUIBarChart
+                                        data={[
+                                            { label: 'MPS', value: pcDeviceStats?.mps || 0, color: '#8b5cf6' },
+                                            { label: 'SM5', value: pcDeviceStats?.sm5 || 0, color: '#ec4899' },
+                                        ]}
+                                        layout="horizontal"
+                                        height={200}
+                                        width={300}
+                                    />
                                 </div>
-                                <span>{pcDeviceStats?.notebook || 0}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center">
-                                    <div className="w-3 h-3 bg-yellow-500 rounded mr-2"></div>
-                                    <span>Printer</span>
+                                <div className="space-y-2 text-sm">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center">
+                                            <div className="w-3 h-3 bg-purple-500 rounded mr-2"></div>
+                                            <span>MPS Allocation</span>
+                                        </div>
+                                        <span className="font-semibold">{pcDeviceStats?.mps || 0}</span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center">
+                                            <div className="w-3 h-3 bg-pink-500 rounded mr-2"></div>
+                                            <span>SM5 Allocation</span>
+                                        </div>
+                                        <span className="font-semibold">{pcDeviceStats?.sm5 || 0}</span>
+                                    </div>
                                 </div>
-                                <span>{pcDeviceStats?.printer || 0}</span>
-                            </div>
-                            <div className="flex items-center justify-between border-t pt-2 mt-2">
-                                <div className="flex items-center">
-                                    <div className="w-3 h-3 bg-purple-500 rounded mr-2"></div>
-                                    <span>MPS Allocation</span>
-                                </div>
-                                <span>{pcDeviceStats?.mps || 0}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center">
-                                    <div className="w-3 h-3 bg-pink-500 rounded mr-2"></div>
-                                    <span>SM5 Allocation</span>
-                                </div>
-                                <span>{pcDeviceStats?.sm5 || 0}</span>
                             </div>
                         </div>
                     </div>

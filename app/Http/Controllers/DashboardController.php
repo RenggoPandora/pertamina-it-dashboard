@@ -133,10 +133,10 @@ class DashboardController extends Controller
 
         $ticketStats = [
             'total' => (clone $ticketQuery)->count(),
+            'assigned' => (clone $ticketQuery)->where('status', 'Assigned')->count(),
             'closed' => (clone $ticketQuery)->where('status', 'Closed')->count(),
             'completed' => (clone $ticketQuery)->where('status', 'Completed')->count(),
             'pending' => (clone $ticketQuery)->where('status', 'Pending')->count(),
-            'rejected' => (clone $ticketQuery)->where('status', 'Rejected')->count(),
             'resolved' => (clone $ticketQuery)->where('status', 'Resolved')->count(),
         ];
         

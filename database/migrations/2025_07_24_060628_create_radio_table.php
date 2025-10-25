@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('radio', function (Blueprint $table) {
             $table->id();
             $table->date('tanggal_pencatatan');
-            $table->enum('status', ['on', 'off'])->default('on');
+            $table->enum('status', ['on', 'off', 'maintenance'])->default('on');
             $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();

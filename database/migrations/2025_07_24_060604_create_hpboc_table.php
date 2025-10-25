@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('jumlah');
             $table->date('tanggal_pencatatan');
             $table->timestamps();
-            $table->enum('status', ['rusak', 'baik'])->default('baik');
+            $table->enum('status', ['rusak', 'baik', 'maintenance'])->default('baik');
             $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null');
 

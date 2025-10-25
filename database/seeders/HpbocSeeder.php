@@ -32,7 +32,7 @@ class HpbocSeeder extends Seeder
                 'nama_perangkat' => 'Xiaomi Redmi Note 11',
                 'jumlah' => 8,
                 'tanggal_pencatatan' => '2024-02-20',
-                'status' => 'baik',
+                'status' => 'maintenance',
                 'site_id' => $sites->random()->id,
             ],
             [
@@ -46,7 +46,7 @@ class HpbocSeeder extends Seeder
                 'nama_perangkat' => 'Vivo Y21',
                 'jumlah' => 5,
                 'tanggal_pencatatan' => '2024-04-05',
-                'status' => 'rusak',
+                'status' => 'maintenance',
                 'site_id' => $sites->random()->id,
             ],
             [
@@ -67,7 +67,7 @@ class HpbocSeeder extends Seeder
                 'nama_perangkat' => 'Xiaomi Poco X4 Pro',
                 'jumlah' => 9,
                 'tanggal_pencatatan' => '2024-07-30',
-                'status' => 'baik',
+                'status' => 'maintenance',
                 'site_id' => $sites->random()->id,
             ],
             [

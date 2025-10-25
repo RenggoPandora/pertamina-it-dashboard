@@ -39,7 +39,7 @@ class RadioSeeder extends Seeder
                 'nama_perangkat' => 'Icom IC-F4003',
                 'jumlah' => 3,
                 'tanggal_pencatatan' => '2024-03-20',
-                'status' => 'on',
+                'status' => 'maintenance',
                 'site_id' => $sites->random()->id,
             ],
             [
@@ -53,7 +53,7 @@ class RadioSeeder extends Seeder
                 'nama_perangkat' => 'Motorola CP1660',
                 'jumlah' => 10,
                 'tanggal_pencatatan' => '2024-05-25',
-                'status' => 'on',
+                'status' => 'maintenance',
                 'site_id' => $sites->random()->id,
             ],
             [
@@ -74,7 +74,7 @@ class RadioSeeder extends Seeder
                 'nama_perangkat' => 'Icom IC-F3003',
                 'jumlah' => 4,
                 'tanggal_pencatatan' => '2024-08-30',
-                'status' => 'off',
+                'status' => 'maintenance',
                 'site_id' => $sites->random()->id,
             ],
             [

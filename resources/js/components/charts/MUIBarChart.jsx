@@ -10,14 +10,55 @@ export default function MUIBarChart({
 }) {
     if (!data.length) return <div className="text-gray-500 text-sm">No chart data.</div>;
 
-    const series = data.map((item, index) => ({
-        data: [item.value],
-        label: item.label,
-        color: item.color || '#34A8FF',
-    }));
+    // Untuk horizontal layout dengan warna berbeda per bar
+    if (layout === 'horizontal') {
+        const axisLabels = data.map(item => item.label);
+        
+        // Buat series terpisah untuk setiap item agar warnanya berbeda
+        const series = data.map((item) => ({
+            data: axisLabels.map(label => label === item.label ? item.value : 0),
+            label: item.label,
+            stack: 'total',
+            color: item.color || '#34A8FF',
+            valueFormatter: (value) => (value === 0 ? '' : value.toString()),
+        }));
 
+        return (
+            <div className="w-full">
+                <BarChart
+                    layout={layout}
+                    width={width}
+                    height={height}
+                    series={series}
+                    xAxis={[{ min: 0 }]}
+                    yAxis={[{ data: axisLabels, scaleType: 'band' }]}
+                    margin={{
+                        top: 10,
+                        right: 10,
+                        bottom: 30,
+                        left: 50,
+                    }}
+                    slotProps={{
+                        bar: { rx: 6 },
+                        legend: { hidden: true },
+                    }}
+                    skipAnimation={false}
+                />
+            </div>
+        );
+    }
+
+    // Untuk vertical layout
     const axisLabels = data.map(item => item.label);
-
+    
+    // Buat series terpisah untuk setiap item agar warnanya berbeda
+    const series = data.map((item) => ({
+        data: axisLabels.map(label => label === item.label ? item.value : 0),
+        label: item.label,
+        stack: 'total',
+        color: item.color || '#34A8FF',
+        valueFormatter: (value) => (value === 0 ? '' : value.toString()),
+    }));
 
     return (
         <div className="w-full">
@@ -26,24 +67,17 @@ export default function MUIBarChart({
                 width={width}
                 height={height}
                 series={series}
-                xAxis={
-                    layout === 'vertical'
-                        ? [{ data: axisLabels, scaleType: 'band' }]
-                        : [{ min: 0 }]
-                }
-                yAxis={
-                    layout === 'horizontal'
-                        ? [{ data: axisLabels, scaleType: 'band' }]
-                        : [{}]
-                }
+                xAxis={[{ data: axisLabels, scaleType: 'band' }]}
+                yAxis={[{}]}
                 margin={{
                     top: 20,
                     right: 20,
                     bottom: 50,
-                    left: layout === 'horizontal' ? 80 : 40,
+                    left: 40,
                 }}
                 slotProps={{
                     bar: { rx: 6 },
+                    legend: { hidden: true },
                 }}
             />
         </div>
