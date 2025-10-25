@@ -117,12 +117,10 @@ export default function CCTVReadiness({ cctvs = [] }) {
                     
                     <div className="p-6">
                         {cameras.length === 0 ? (
-                            <div className="text-center py-12">
-                                <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                </svg>
-                                <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">Belum ada data</h3>
-                                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Data CCTV belum tersedia.</p>
+                            <div className="text-center text-gray-500 dark:text-gray-400 py-8">
+                                <div className="text-6xl mb-4">📹</div>
+                                <p className="text-xl mb-2">Tidak ada CCTV ditemukan</p>
+                                <p>Tambahkan CCTV pertama Anda untuk memulai.</p>
                             </div>
                         ) : (
                             <div className="overflow-x-auto">
@@ -178,16 +176,43 @@ export default function CCTVReadiness({ cctvs = [] }) {
                                                             {camera.ip_address}
                                                         </code>
                                                     </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                                                        {camera.up || '-'}
+                                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                                                        {camera.up ? (
+                                                            camera.up
+                                                        ) : (
+                                                            <span className="inline-flex items-center text-xs text-gray-400 dark:text-gray-500 italic">
+                                                                <svg className="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                                </svg>
+                                                                Data belum tersedia
+                                                            </span>
+                                                        )}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                                                        {camera.down || '-'}
+                                                        {camera.down ? (
+                                                            camera.down
+                                                        ) : (
+                                                            <span className="inline-flex items-center text-xs text-gray-400 dark:text-gray-500 italic">
+                                                                <svg className="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                                </svg>
+                                                                Data belum tersedia
+                                                            </span>
+                                                        )}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
-                                                        <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${availabilityBgColor} ${availabilityColor}`}>
-                                                            {camera.availability ? `${camera.availability}%` : '-'}
-                                                        </span>
+                                                        {camera.availability ? (
+                                                            <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${availabilityBgColor} ${availabilityColor}`}>
+                                                                {camera.availability}%
+                                                            </span>
+                                                        ) : (
+                                                            <span className="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 italic">
+                                                                <svg className="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                                </svg>
+                                                                Data belum tersedia
+                                                            </span>
+                                                        )}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                         <a 

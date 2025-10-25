@@ -116,8 +116,8 @@ class DashboardController extends Controller
 
         $networkStats = [
             'total' => (clone $networkDeviceQuery)->count(),
-            'up' => (clone $networkDeviceQuery)->where('status', 'up')->count(),
-            'down' => (clone $networkDeviceQuery)->where('status', 'down')->count(),
+            'up' => (clone $networkDeviceQuery)->whereNotNull('up')->count(),
+            'down' => (clone $networkDeviceQuery)->whereNotNull('down')->count(),
             'switches' => (clone $networkDeviceQuery)->where('jenis', 'switch')->count(),
             'accessPoints' => (clone $networkDeviceQuery)->where('jenis', 'access point')->count(),
             'network' => (clone $networkDeviceQuery)->where('jenis', 'network')->count(),

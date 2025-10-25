@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->date('tanggal_pencatatan');
             $table->enum('status', ['on', 'off'])->default('on');
+            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
 
             $table->foreignId('site_id')->constrained();

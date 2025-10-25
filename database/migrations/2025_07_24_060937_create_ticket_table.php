@@ -18,6 +18,8 @@ return new class extends Migration
             $table->text('summary');
             $table->date('tanggal_pencatatan');
             $table->enum('status', ['assigned', 'closed', 'pending', 'resolved', 'completed'])->default('assigned');
+            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
         });
     }
