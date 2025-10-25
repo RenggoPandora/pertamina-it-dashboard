@@ -38,14 +38,10 @@ export default function CCTVReadiness({ cctvs = [] }) {
 
     // Calculate average availability
     const calculateAverageAvailability = () => {
-        const validAvailabilities = cameras
-            .map(c => parseFloat(c.availability))
-            .filter(a => !isNaN(a) && a > 0);
+        if (cameras.length === 0) return '0.00';
         
-        if (validAvailabilities.length === 0) return 0;
-        
-        const sum = validAvailabilities.reduce((acc, val) => acc + val, 0);
-        return (sum / validAvailabilities.length).toFixed(2);
+        const sum = cameras.reduce((acc, c) => acc + (parseFloat(c.availability) || 0), 0);
+        return (sum / cameras.length).toFixed(2);
     };
 
     return (

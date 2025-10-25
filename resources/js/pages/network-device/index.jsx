@@ -157,7 +157,7 @@ export default function NetworkDevice({ networkDevices, flash }) {
                         </div>
                     </div>
 
-                    {/* Total Up Card */}
+                    {/* Average Uptime Card */}
                     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                         <div className="flex items-center">
                             <div className="flex-shrink-0">
@@ -168,16 +168,18 @@ export default function NetworkDevice({ networkDevices, flash }) {
                                 </div>
                             </div>
                             <div className="ml-4 flex-1">
-                                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Up</h3>
+                                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Rata-rata Uptime</h3>
                                 <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-1">
-                                    {devices.reduce((sum, d) => sum + (d.up || 0), 0)}
+                                    {devices.length > 0 
+                                        ? (devices.reduce((sum, d) => sum + (parseFloat(d.availability) || 0), 0) / devices.length).toFixed(2)
+                                        : '0.00'}%
                                 </p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Perangkat online</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Availability perangkat</p>
                             </div>
                         </div>
                     </div>
 
-                    {/* Total Down Card */}
+                    {/* Devices Down Card */}
                     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                         <div className="flex items-center">
                             <div className="flex-shrink-0">
@@ -188,9 +190,9 @@ export default function NetworkDevice({ networkDevices, flash }) {
                                 </div>
                             </div>
                             <div className="ml-4 flex-1">
-                                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Down</h3>
+                                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Devices Down</h3>
                                 <p className="text-3xl font-bold text-red-600 dark:text-red-400 mt-1">
-                                    {devices.reduce((sum, d) => sum + (d.down || 0), 0)}
+                                    {devices.filter(d => d.availability === '0' || d.availability === 0).length}
                                 </p>
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Perangkat offline</p>
                             </div>

@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             RadioSeeder::class,
             HpbocSeeder::class,
             PcDeviceSeeder::class,
+            NetworkDeviceSeeder::class,
             CctvSeeder::class,
             TicketSeeder::class,
         ]);
