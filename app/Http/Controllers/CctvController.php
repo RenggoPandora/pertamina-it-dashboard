@@ -44,6 +44,11 @@ class CctvController extends Controller
             'availability' => 'nullable|string',
         ]);
 
+        // Jika availability = 0, maka status harus offline
+        if (isset($validated['availability']) && $validated['availability'] == '0') {
+            $validated['status'] = 'offline';
+        }
+
         Cctv::create($validated);
 
         return redirect()->route('cctv.index')->with('success', 'CCTV berhasil ditambahkan.');
@@ -75,6 +80,11 @@ class CctvController extends Controller
             'down' => 'nullable|string',
             'availability' => 'nullable|string',
         ]);
+
+        // Jika availability = 0, maka status harus offline
+        if (isset($validated['availability']) && $validated['availability'] == '0') {
+            $validated['status'] = 'offline';
+        }
 
         $cctv->update($validated);
 
