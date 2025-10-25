@@ -14,12 +14,27 @@ use Illuminate\Support\Facades\Log;
 
 class TelephoneController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $telephones = Telephone::with('site')->get();
+        $query = Telephone::with('site');
+        
+        // Filter by date range
+        if ($request->has('start_date') && $request->start_date) {
+            $query->whereDate('tanggal_pencatatan', '>=', $request->start_date);
+        }
+        
+        if ($request->has('end_date') && $request->end_date) {
+            $query->whereDate('tanggal_pencatatan', '<=', $request->end_date);
+        }
+        
+        $telephones = $query->get();
 
         return Inertia::render('telephone/index', [
-            'telephones' => $telephones
+            'telephones' => $telephones,
+            'filters' => [
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
+            ],
         ]);
     }
 

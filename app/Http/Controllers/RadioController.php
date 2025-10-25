@@ -10,11 +10,27 @@ use Illuminate\Support\Facades\Log;
 
 class RadioController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $radio = Radio::with('site')->latest()->get();
+        $query = Radio::with('site');
+        
+        // Filter by date range
+        if ($request->has('start_date') && $request->start_date) {
+            $query->whereDate('tanggal_pencatatan', '>=', $request->start_date);
+        }
+        
+        if ($request->has('end_date') && $request->end_date) {
+            $query->whereDate('tanggal_pencatatan', '<=', $request->end_date);
+        }
+        
+        $radio = $query->latest()->get();
+        
         return Inertia::render('radio/index', [
-            'radio' => $radio
+            'radio' => $radio,
+            'filters' => [
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
+            ],
         ]);
     }
 

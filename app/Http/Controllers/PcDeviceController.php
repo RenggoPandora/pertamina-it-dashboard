@@ -9,12 +9,27 @@ use Illuminate\Support\Facades\Log;
 
 class PCDeviceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pcDevices = PCDevice::all();
+        $query = PCDevice::query();
+
+        // Apply date range filter if provided
+        if ($request->has('start_date') && $request->start_date) {
+            $query->whereDate('tanggal_pencatatan', '>=', $request->start_date);
+        }
+        
+        if ($request->has('end_date') && $request->end_date) {
+            $query->whereDate('tanggal_pencatatan', '<=', $request->end_date);
+        }
+
+        $pcDevices = $query->get();
         
         return Inertia::render('pc-device/index', [
             'pcDevices' => $pcDevices,
+            'filters' => [
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
+            ]
         ]);
     }
 

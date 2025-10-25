@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Head, useForm, router } from '@inertiajs/react';
 import Layout from '@/components/layouts/Layout';
+import DateRangeFilter from '@/components/DateRangeFilter';
 
-export default function HPBOC({ hpboc, flash }) {
+export default function HPBOC({ hpboc, flash, filters }) {
     // Use the data passed from the Laravel controller
     const devices = hpboc || [];
     const [showUploadModal, setShowUploadModal] = useState(false);
@@ -98,6 +99,17 @@ export default function HPBOC({ hpboc, flash }) {
         });
     };
 
+    // Add date filter handler
+    const handleDateFilter = ({ startDate, endDate }) => {
+        router.get(route('hpboc.index'), {
+            start_date: startDate,
+            end_date: endDate
+        }, {
+            preserveState: true,
+            preserveScroll: true
+        });
+    };
+
     return (
         <>
             <Head title="HPBOC - Pertamina IT Dashboard" />
@@ -168,8 +180,22 @@ export default function HPBOC({ hpboc, flash }) {
                 {/* Device List */}
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                     <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                        <h3 className="text-lg font-medium text-gray-900 dark:text-white">Daftar Perangkat HP BOC</h3>
+                        <div>
+                            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Daftar Perangkat HP BOC</h3>
+                            {filters?.start_date && filters?.end_date && (
+                                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                    Menampilkan data dari {new Date(filters.start_date).toLocaleDateString('id-ID')} - {new Date(filters.end_date).toLocaleDateString('id-ID')}
+                                </p>
+                            )}
+                        </div>
                         <div className="flex space-x-3">
+                            {/* Date Range Filter */}
+                            <DateRangeFilter 
+                                onFilter={handleDateFilter}
+                                defaultStartDate={filters?.start_date}
+                                defaultEndDate={filters?.end_date}
+                            />
+                            
                             {/* Upload Excel Button */}
                             <button
                                 onClick={openUploadModal}

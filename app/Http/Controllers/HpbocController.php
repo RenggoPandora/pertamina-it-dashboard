@@ -11,10 +11,28 @@ use Illuminate\Support\Facades\Log;
 class HpbocController extends Controller
 {
      
-    public function index()
+    public function index(Request $request)
     {
-        $hpboc = Hpboc::with('site')->get();
-        return Inertia::render('hpboc/index', ['hpboc' => $hpboc]);
+        $query = Hpboc::with('site');
+
+        // Apply date range filter if provided
+        if ($request->has('start_date') && $request->start_date) {
+            $query->whereDate('tanggal_pencatatan', '>=', $request->start_date);
+        }
+        
+        if ($request->has('end_date') && $request->end_date) {
+            $query->whereDate('tanggal_pencatatan', '<=', $request->end_date);
+        }
+
+        $hpboc = $query->get();
+        
+        return Inertia::render('hpboc/index', [
+            'hpboc' => $hpboc,
+            'filters' => [
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
+            ]
+        ]);
     }
 
     public function create()

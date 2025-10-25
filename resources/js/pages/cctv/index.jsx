@@ -1,12 +1,23 @@
 import React, { useState } from 'react';
 import { Head, usePage, router } from '@inertiajs/react';
 import Layout from '@/components/layouts/Layout';
+import DateRangeFilter from '@/components/DateRangeFilter';
 
-export default function CCTV({ cctvs = [] }) {
+export default function CCTV({ cctvs = [], filters }) {
     const [cameras, setCameras] = useState(cctvs);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedCctv, setSelectedCctv] = useState(null);
     const [showUploadModal, setShowUploadModal] = useState(false);
+
+    // Handle date range filter
+    const handleDateFilter = ({ startDate, endDate }) => {
+        router.get(route('cctv.index'), {
+            start_date: startDate,
+            end_date: endDate
+        }, {
+            preserveScroll: true
+        });
+    };
 
     const openDeleteModal = (cctv) => {
         setSelectedCctv(cctv);
@@ -95,9 +106,19 @@ export default function CCTV({ cctvs = [] }) {
                     <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                         <div>
                             <h3 className="text-lg font-medium text-gray-900 dark:text-white">Daftar CCTV</h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Kelola data kamera CCTV</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                {filters?.start_date && filters?.end_date 
+                                    ? `Menampilkan data dari ${new Date(filters.start_date).toLocaleDateString('id-ID')} - ${new Date(filters.end_date).toLocaleDateString('id-ID')}`
+                                    : 'Kelola data kamera CCTV'
+                                }
+                            </p>
                         </div>
                         <div className="flex space-x-3">
+                            <DateRangeFilter 
+                                onFilter={handleDateFilter}
+                                defaultStartDate={filters?.start_date || ''}
+                                defaultEndDate={filters?.end_date || ''}
+                            />
                             <button
                                 onClick={openUploadModal}
                                 className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm"

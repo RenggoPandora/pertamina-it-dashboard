@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Head, router } from '@inertiajs/react'; // Tambahkan router
 import Layout from '@/components/layouts/Layout';
+import DateRangeFilter from '@/components/DateRangeFilter';
 
-export default function PCDevice({ pcDevices = [] }) {
+export default function PCDevice({ pcDevices = [], filters }) {
     const [devices, setDevices] = useState(pcDevices);
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [uploadedFile, setUploadedFile] = useState(null);
@@ -75,6 +76,17 @@ export default function PCDevice({ pcDevices = [] }) {
         });
     };
 
+    // Add date filter handler
+    const handleDateFilter = ({ startDate, endDate }) => {
+        router.get(route('pcdevice.index'), {
+            start_date: startDate,
+            end_date: endDate
+        }, {
+            preserveState: true,
+            preserveScroll: true
+        });
+    };
+
     return (
         <>
             <Head title="PC Device - Pertamina IT Dashboard" />
@@ -139,8 +151,22 @@ export default function PCDevice({ pcDevices = [] }) {
                 {/* Device Inventory */}
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                     <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                        <h3 className="text-lg font-medium text-gray-900 dark:text-white">Daftar PC Device</h3>
+                        <div>
+                            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Daftar PC Device</h3>
+                            {filters?.start_date && filters?.end_date && (
+                                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                    Menampilkan data dari {new Date(filters.start_date).toLocaleDateString('id-ID')} - {new Date(filters.end_date).toLocaleDateString('id-ID')}
+                                </p>
+                            )}
+                        </div>
                         <div className="flex space-x-3">
+                            {/* Date Range Filter */}
+                            <DateRangeFilter 
+                                onFilter={handleDateFilter}
+                                defaultStartDate={filters?.start_date}
+                                defaultEndDate={filters?.end_date}
+                            />
+                            
                             {/* Upload Excel Button (Mock) */}
                             <button
                                 onClick={openUploadModal}

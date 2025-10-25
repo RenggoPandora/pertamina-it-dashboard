@@ -8,21 +8,59 @@ use Inertia\Inertia;
 
 class CctvController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $cctvs = Cctv::all();
+        $query = Cctv::query();
+        
+        // Log untuk debug
+        \Log::info('CCTV Filter', [
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+        ]);
+        
+        // Filter by date range
+        if ($request->has('start_date') && $request->start_date) {
+            $query->whereDate('tanggal_pencatatan', '>=', $request->start_date);
+        }
+        
+        if ($request->has('end_date') && $request->end_date) {
+            $query->whereDate('tanggal_pencatatan', '<=', $request->end_date);
+        }
+        
+        $cctvs = $query->get();
+        
+        \Log::info('CCTV Count', ['count' => $cctvs->count()]);
         
         return Inertia::render('cctv/index', [
             'cctvs' => $cctvs,
+            'filters' => [
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
+            ],
         ]);
     }
 
-    public function readiness()
+    public function readiness(Request $request)
     {
-        $cctvs = Cctv::all();
+        $query = Cctv::query();
+        
+        // Filter by date range
+        if ($request->has('start_date') && $request->start_date) {
+            $query->whereDate('tanggal_pencatatan', '>=', $request->start_date);
+        }
+        
+        if ($request->has('end_date') && $request->end_date) {
+            $query->whereDate('tanggal_pencatatan', '<=', $request->end_date);
+        }
+        
+        $cctvs = $query->get();
         
         return Inertia::render('cctv/readiness', [
             'cctvs' => $cctvs,
+            'filters' => [
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
+            ],
         ]);
     }
 
