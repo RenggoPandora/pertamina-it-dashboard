@@ -59,6 +59,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     // CCTV resource routes
     Route::get('cctv/readiness', [CctvController::class, 'readiness'])->name('cctv.readiness');
+    Route::post('cctv/import', [CctvController::class, 'import'])->name('cctv.import');
+    Route::get('cctv/template', [CctvController::class, 'downloadTemplate'])->name('cctv.template');
     Route::resource('cctv', CctvController::class);
 
     // Ticket resource routes
