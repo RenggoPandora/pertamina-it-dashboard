@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\NetworkDevice;
+use App\Imports\NetworkDeviceImport;
+use App\Exports\NetworkDeviceTemplateExport;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 
 class NetworkDeviceController extends Controller
 {
@@ -128,15 +131,72 @@ class NetworkDeviceController extends Controller
     }
 
     public function destroy($id)
-{
-    $networkDevice = NetworkDevice::find($id);
+    {
+        $networkDevice = NetworkDevice::find($id);
 
-    if (!$networkDevice) {
-        Log::error('Network device not found', ['id' => $id]);
-        return response()->json(['message' => 'Device not found'], 404);
+        if (!$networkDevice) {
+            Log::error('Network device not found', ['id' => $id]);
+            return response()->json(['message' => 'Device not found'], 404);
+        }
+
+        $networkDevice->delete();
+        return redirect()->back()->with('success', 'Data berhasil dihapus.');
     }
 
-    $networkDevice->delete();
-    return redirect()->back()->with('success', 'Data berhasil dihapus.');
+    /**
+     * Import Network Device dari Excel
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'excel_file' => 'required|file|mimes:xlsx,xls|max:5120', // Max 5MB
+        ]);
+
+        try {
+            $file = $request->file('excel_file');
+            $filePath = $file->getRealPath();
+
+            // Create import instance
+            $import = new NetworkDeviceImport($filePath);
+            
+            // Import data
+            Excel::import($import, $file);
+            
+            // Get statistics
+            $stats = $import->getStats();
+            
+            if ($stats['failed'] > 0) {
+                $errorMessage = "Import selesai dengan {$stats['success']} sukses dan {$stats['failed']} gagal. ";
+                $errorMessage .= "Errors: " . implode(', ', array_slice($stats['errors'], 0, 3));
+                
+                return redirect()->back()->with('error', $errorMessage);
+            }
+            
+            $successMessage = "Berhasil mengimport {$stats['success']} Network Device ({$stats['jenis']})";
+            return redirect()->back()->with('success', $successMessage);
+            
+        } catch (\Exception $e) {
+            Log::error('Network Device import error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Download template Excel untuk Network Device
+     */
+    public function downloadTemplate(Request $request)
+    {
+        // Default jenis adalah switch, bisa di-customize dari query parameter
+        $jenis = $request->get('jenis', 'switch');
+        
+        // Validasi jenis
+        if (!in_array($jenis, ['switch', 'network', 'access point'])) {
+            $jenis = 'switch';
+        }
+
+        $fileName = 'network_device_template_' . str_replace(' ', '_', $jenis) . '_' . date('Y-m-d') . '.xlsx';
+        
+        return Excel::download(new NetworkDeviceTemplateExport($jenis), $fileName);
+    }
 }
-}
+

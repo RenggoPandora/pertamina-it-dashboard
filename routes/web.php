@@ -48,6 +48,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('telephone', TelephoneController::class);
     
     // Network Device resource routes
+    Route::post('networkdevice/import', [NetworkDeviceController::class, 'import'])->name('networkdevice.import');
+    Route::get('networkdevice/template', [NetworkDeviceController::class, 'downloadTemplate'])->name('networkdevice.template');
     Route::resource('networkdevice', NetworkDeviceController::class);
     Route::delete('/networkdevice/{networkDevice}', [NetworkDeviceController::class, 'destroy'])->name('networkdevice.destroy');
 

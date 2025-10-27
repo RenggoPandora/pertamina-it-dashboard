@@ -8,6 +8,7 @@ export default function NetworkDevice({ networkDevices, flash, filters }) {
     const devices = networkDevices || [];
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [uploadedFile, setUploadedFile] = useState(null);
+    const [selectedJenis, setSelectedJenis] = useState('switch'); // Default jenis untuk template
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedDevice, setSelectedDevice] = useState(null);
     const [deleteError, setDeleteError] = useState(null);
@@ -54,11 +55,22 @@ export default function NetworkDevice({ networkDevices, flash, filters }) {
     };
 
     const handleUploadConfirm = () => {
-        // Mock function - tidak ada implementasi import
-        alert('Fitur import belum tersedia');
-        setShowUploadModal(false);
-        setUploadedFile(null);
-        reset();
+        post(route('networkdevice.import'), {
+            onSuccess: () => {
+                setShowUploadModal(false);
+                setUploadedFile(null);
+                reset();
+                // Reload halaman untuk refresh data
+                router.visit(route('networkdevice.index'), { 
+                    method: 'get',
+                    preserveState: false,
+                    preserveScroll: false 
+                });
+            },
+            onError: () => {
+                // Error akan ditampilkan di flash message
+            },
+        });
     };
 
     const handleUploadCancel = () => {
@@ -445,88 +457,148 @@ export default function NetworkDevice({ networkDevices, flash, filters }) {
                     </div>
                 </div>
 
-                {/* Upload Excel Modal (Mock - No Import Function) */}
+                {/* Upload Excel Modal */}
                 {showUploadModal && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
-                        <div className="relative bg-white dark:bg-gray-800 p-6 border w-96 shadow-lg rounded-lg">
-                            {/* Modal Header */}
-                            <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                    Upload File Network Device
-                                </h3>
-                                <button
-                                    onClick={handleUploadCancel}
-                                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-                                >
-                                    <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </div>
-
-                            {/* Upload Area */}
+                    <div className="fixed inset-0 z-50 overflow-y-auto">
+                        <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                            {/* Background overlay */}
                             <div 
-                                className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center hover:border-green-400 transition-colors"
-                                onDragOver={handleDragOver}
-                                onDrop={handleDrop}
-                            >
-                                {uploadedFile ? (
-                                    <div className="space-y-2">
-                                        <div className="text-green-500">
-                                            <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                        </div>
-                                        <p className="text-sm font-medium text-gray-900 dark:text-white">
-                                            {uploadedFile.name}
-                                        </p>
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                                            {(uploadedFile.size / 1024).toFixed(2)} KB
-                                        </p>
-                                    </div>
-                                ) : (
-                                    <div className="space-y-2">
-                                        <div className="text-gray-400">
-                                            <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75 dark:bg-gray-900 dark:bg-opacity-75"
+                                onClick={handleUploadCancel}
+                            ></div>
+
+                            {/* Modal panel */}
+                            <div className="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                                <div className="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                    <div className="sm:flex sm:items-start">
+                                        <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/20 sm:mx-0 sm:h-10 sm:w-10">
+                                            <svg className="h-6 w-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                                             </svg>
                                         </div>
-                                        <div>
-                                            <label className="cursor-pointer">
-                                                <span className="text-sm text-red-600 hover:text-red-700 font-medium">
-                                                    Click to upload
-                                                </span>
-                                                <span className="text-sm text-gray-500 dark:text-gray-400"> or drag and drop</span>
-                                                <input
-                                                    type="file"
-                                                    accept=".xlsx,.xls"
-                                                    onChange={handleFileUpload}
-                                                    className="hidden"
-                                                />
-                                            </label>
-                                        </div>
-                                        <p className="text-xs text-gray-400">
-                                            .xlsx (max. 500MB)
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
+                                        <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left flex-1">
+                                            <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                                                Upload Excel Network Device
+                                            </h3>
+                                            <div className="mt-2">
+                                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                                    Upload file Excel untuk import data Network Device secara massal.
+                                                </p>
+                                            </div>
 
-                            {/* Modal Actions */}
-                            <div className="flex items-center justify-end space-x-3 mt-6">
-                                <button
-                                    onClick={handleUploadCancel}
-                                    className="px-4 py-2 text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={handleUploadConfirm}
-                                    disabled={!uploadedFile || processing}
-                                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                >
-                                    {processing ? 'Processing...' : 'Confirm'}
-                                </button>
+                                            {/* Format Requirements */}
+                                            <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <h4 className="text-xs font-semibold text-blue-800 dark:text-blue-200">Download Template:</h4>
+                                                </div>
+                                                <div className="grid grid-cols-3 gap-2 mb-3">
+                                                    <a
+                                                        href={route('networkdevice.template', { jenis: 'switch' })}
+                                                        className="inline-flex items-center justify-center px-2 py-1.5 text-xs font-medium text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-800 hover:bg-blue-200 dark:hover:bg-blue-700 rounded transition-colors"
+                                                    >
+                                                        <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                        </svg>
+                                                        Switch
+                                                    </a>
+                                                    <a
+                                                        href={route('networkdevice.template', { jenis: 'network' })}
+                                                        className="inline-flex items-center justify-center px-2 py-1.5 text-xs font-medium text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-800 hover:bg-blue-200 dark:hover:bg-blue-700 rounded transition-colors"
+                                                    >
+                                                        <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                        </svg>
+                                                        Network
+                                                    </a>
+                                                    <a
+                                                        href={route('networkdevice.template', { jenis: 'access point' })}
+                                                        className="inline-flex items-center justify-center px-2 py-1.5 text-xs font-medium text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-800 hover:bg-blue-200 dark:hover:bg-blue-700 rounded transition-colors"
+                                                    >
+                                                        <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                        </svg>
+                                                        Access Point
+                                                    </a>
+                                                </div>
+                                                <ul className="text-xs text-blue-700 dark:text-blue-300 space-y-1">
+                                                    <li>• Cell A3: Harus mengandung kata kunci:</li>
+                                                    <li className="ml-4 text-[10px] italic">- "Switch" untuk jenis switch</li>
+                                                    <li className="ml-4 text-[10px] italic">- "Network" untuk jenis network</li>
+                                                    <li className="ml-4 text-[10px] italic">- "Access Point" untuk access point</li>
+                                                    <li>• Cell A6: Tanggal pencatatan</li>
+                                                    <li className="ml-4 text-[10px] italic">Contoh: "End Time: 25 Jul 2025..."</li>
+                                                    <li>• Baris 9: Header kolom</li>
+                                                    <li>• Baris 10+: Data Network Device</li>
+                                                    <li className="ml-4">Kolom A: Name, B: IP, C: Up, G: Down, I: Availability</li>
+                                                </ul>
+                                            </div>
+
+                                            {/* File Upload Area */}
+                                            <div className="mt-4">
+                                                <div 
+                                                    className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-green-500 dark:hover:border-green-500 transition-colors cursor-pointer"
+                                                    onDragOver={handleDragOver}
+                                                    onDrop={handleDrop}
+                                                    onClick={() => document.getElementById('excel-upload-network').click()}
+                                                >
+                                                    <input
+                                                        id="excel-upload-network"
+                                                        type="file"
+                                                        accept=".xlsx,.xls"
+                                                        onChange={handleFileUpload}
+                                                        className="hidden"
+                                                    />
+                                                    {uploadedFile ? (
+                                                        <div className="space-y-2">
+                                                            <svg className="mx-auto h-12 w-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                            </svg>
+                                                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                                                                {uploadedFile.name}
+                                                            </p>
+                                                            <p className="text-xs text-gray-500">
+                                                                {(uploadedFile.size / 1024).toFixed(2)} KB
+                                                            </p>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="space-y-2">
+                                                            <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                                                            </svg>
+                                                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                                                                Drag & drop file Excel atau klik untuk browse
+                                                            </p>
+                                                            <p className="text-xs text-gray-500">
+                                                                Format: .xlsx atau .xls (Max 5MB)
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                {errors.excel_file && (
+                                                    <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.excel_file}</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={handleUploadConfirm}
+                                        disabled={!uploadedFile || processing}
+                                        className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {processing ? 'Mengupload...' : 'Upload'}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={handleUploadCancel}
+                                        disabled={processing}
+                                        className="mt-3 sm:mt-0 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:w-auto sm:text-sm"
+                                    >
+                                        Batal
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
