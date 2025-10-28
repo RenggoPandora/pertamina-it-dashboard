@@ -66,6 +66,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('cctv', CctvController::class);
 
     // Ticket resource routes
+    Route::post('ticket/import', [TicketController::class, 'import'])->name('ticket.import');
+    Route::get('ticket/template', [TicketController::class, 'downloadTemplate'])->name('ticket.template');
     Route::resource('ticket', TicketController::class);
     Route::get('ticket', [TicketController::class, 'index'])->name('ticket.index');
 });

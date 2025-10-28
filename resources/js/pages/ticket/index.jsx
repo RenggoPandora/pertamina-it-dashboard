@@ -1,40 +1,67 @@
-import React, { useState } from 'react';
-import { Head, usePage, router } from '@inertiajs/react';
+import React, { useState, useEffect } from 'react';
+import { Head, usePage, router, useForm } from '@inertiajs/react';
 import Layout from '@/components/layouts/Layout';
 
 export default function Index() {
-  const { tickets } = usePage().props;
+  const { tickets, flash } = usePage().props;
   const [showUploadModal, setShowUploadModal] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState(null);
-  const [processing, setProcessing] = useState(false);
+  const { data, setData, post, processing, reset } = useForm({
+    file: null,
+  });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
 
+  // Show flash messages
+  useEffect(() => {
+    if (flash?.success) {
+      alert(flash.success);
+    }
+    if (flash?.error) {
+      alert(flash.error);
+    }
+  }, [flash]);
+
   const openUploadModal = () => setShowUploadModal(true);
-  const handleUploadCancel = () => {
+  
+  const closeUploadModal = () => {
     setShowUploadModal(false);
-    setUploadedFile(null);
+    reset();
   };
+  
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
-    if (file) setUploadedFile(file);
+    if (file) setData('file', file);
   };
+  
   const handleDragOver = (event) => event.preventDefault();
+  
   const handleDrop = (event) => {
     event.preventDefault();
     const files = event.dataTransfer.files;
-    if (files.length > 0) setUploadedFile(files[0]);
+    if (files.length > 0) setData('file', files[0]);
   };
+  
   const handleUploadConfirm = () => {
-    if (uploadedFile) {
-      setProcessing(true);
-      setTimeout(() => {
-        setProcessing(false);
-        setShowUploadModal(false);
-        setUploadedFile(null);
-        alert('Import belum tersedia untuk Ticket');
-      }, 2000);
+    if (data.file) {
+      post(route('ticket.import'), {
+        onSuccess: () => {
+          closeUploadModal();
+          // Auto-refresh the page
+          router.visit(route('ticket.index'), {
+            method: 'get',
+            preserveState: false,
+            preserveScroll: false,
+          });
+        },
+        onError: (errors) => {
+          console.error('Upload errors:', errors);
+        },
+      });
     }
+  };
+
+  const downloadTemplate = () => {
+    window.location.href = route('ticket.template');
   };
 
   const openDeleteModal = (ticket) => {
@@ -162,83 +189,137 @@ export default function Index() {
 
         {/* Upload Modal */}
         {showUploadModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
-            <div className="relative bg-white dark:bg-gray-800 p-6 border w-96 shadow-lg rounded-lg">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Upload File Ticket
-                </h3>
-                <button
-                  onClick={handleUploadCancel}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-                >
-                  <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-
+          <div className="fixed inset-0 z-50 overflow-y-auto backdrop-blur-sm bg-black/30">
+            <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+              {/* Background overlay */}
               <div 
-                className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center hover:border-green-400 transition-colors"
-                onDragOver={handleDragOver}
-                onDrop={handleDrop}
-              >
-                {uploadedFile ? (
-                  <div className="space-y-2">
-                    <div className="text-green-500">
-                      <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">
-                      {uploadedFile.name}
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {(uploadedFile.size / 1024).toFixed(2)} KB
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    <div className="text-gray-400">
-                      <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                className="fixed inset-0"
+                onClick={closeUploadModal}
+              ></div>
+
+              {/* Modal panel */}
+              <div className="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full relative z-10">
+                <div className="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                  <div className="sm:flex sm:items-start">
+                    <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/20 sm:mx-0 sm:h-10 sm:w-10">
+                      <svg className="h-6 w-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                       </svg>
                     </div>
-                    <div>
-                      <label className="cursor-pointer">
-                        <span className="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                          Click to upload
-                        </span>
-                        <span className="text-sm text-gray-500 dark:text-gray-400"> or drag and drop</span>
-                        <input
-                          type="file"
-                          accept=".xlsx,.xls"
-                          onChange={handleFileUpload}
-                          className="hidden"
-                        />
-                      </label>
+                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left flex-1">
+                      <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                        Upload Excel Ticket
+                      </h3>
+                      <div className="mt-2">
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          Upload file Excel untuk import data ticket secara batch.
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-xs text-gray-400">
-                      .xlsx (max. 500MB)
-                    </p>
+                    <button
+                      onClick={closeUploadModal}
+                      className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                    >
+                      <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
                   </div>
-                )}
-              </div>
 
-              <div className="flex items-center justify-end space-x-3 mt-6">
-                <button
-                  onClick={handleUploadCancel}
-                  className="px-4 py-2 text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleUploadConfirm}
-                  disabled={!uploadedFile || processing}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  {processing ? 'Processing...' : 'Confirm'}
-                </button>
+                  {/* Download Template Button */}
+                  <div className="mt-4">
+                    <button
+                      onClick={downloadTemplate}
+                      className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center justify-center"
+                    >
+                      <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      Download Template Excel
+                    </button>
+                  </div>
+
+                  {/* Upload Area */}
+                  <div className="mt-4">
+                    <div 
+                      className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center hover:border-green-400 dark:hover:border-green-500 transition-colors cursor-pointer"
+                      onDragOver={handleDragOver}
+                      onDrop={handleDrop}
+                      onClick={() => document.getElementById('file-upload').click()}
+                    >
+                      {data.file ? (
+                        <div className="space-y-2">
+                          <div className="text-green-500">
+                            <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </div>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            {data.file.name}
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {(data.file.size / 1024).toFixed(2)} KB
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          <div className="text-gray-400">
+                            <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                          </div>
+                          <div>
+                            <span className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+                              Click to upload
+                            </span>
+                            <span className="text-sm text-gray-500 dark:text-gray-400"> or drag and drop</span>
+                          </div>
+                          <p className="text-xs text-gray-400">
+                            Excel files only (.xlsx, .xls) - Max 5MB
+                          </p>
+                        </div>
+                      )}
+                      <input
+                        id="file-upload"
+                        type="file"
+                        accept=".xlsx,.xls"
+                        onChange={handleFileUpload}
+                        className="hidden"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Format Info */}
+                  <div className="mt-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                    <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-2">Format Requirements:</h4>
+                    <ul className="text-xs text-blue-800 dark:text-blue-400 space-y-1 list-disc list-inside">
+                      <li>Cell A3: Must contain "Tickets"</li>
+                      <li>Row 9: Column headers (Name, Assignee, Summary, Date, Status)</li>
+                      <li>Row 10+: Data rows</li>
+                      <li>Columns: A=Name, B=Assignee, C=Summary, D=Date, E=Status</li>
+                      <li>Valid status: assigned, pending, resolved, completed, closed</li>
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Footer Buttons */}
+                <div className="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                  <button
+                    type="button"
+                    onClick={handleUploadConfirm}
+                    disabled={!data.file || processing}
+                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {processing ? 'Uploading...' : 'Upload'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={closeUploadModal}
+                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
           </div>
