@@ -6,6 +6,9 @@ use App\Models\PCDevice;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
+use App\Imports\PcDeviceImport;
+use App\Exports\PcDeviceTemplateExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PCDeviceController extends Controller
 {
@@ -150,6 +153,42 @@ class PCDeviceController extends Controller
 
         $pcDevice->delete();
         return redirect()->back()->with('success', 'PC Device berhasil dihapus.');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls|max:5120', // max 5MB
+        ]);
+
+        try {
+            $file = $request->file('file');
+            $filePath = $file->getRealPath();
+            
+            Log::info('Starting PC Device import from file: ' . $file->getClientOriginalName());
+            
+            $import = new PcDeviceImport($filePath);
+            Excel::import($import, $file);
+            
+            $stats = $import->getStats();
+            
+            Log::info('PC Device import completed', $stats);
+            
+            if ($stats['failed'] > 0) {
+                return redirect()->back()->with('warning', "Import selesai dengan warning! {$stats['imported']} PC Device berhasil diimport, {$stats['failed']} baris dilewati. Pastikan Type (Desktop/Notebook/Printer) dan Allocation (MPS/SM5) sudah benar.");
+            }
+            
+            return redirect()->back()->with('success', "Import berhasil! {$stats['imported']} PC Device berhasil diimport.");
+        } catch (\Exception $e) {
+            Log::error('PC Device import failed: ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
+            return redirect()->back()->with('error', 'Import gagal: ' . $e->getMessage());
+        }
+    }
+
+    public function downloadTemplate()
+    {
+        return Excel::download(new PcDeviceTemplateExport(), 'template_pc_device.xlsx');
     }
 }
 

@@ -55,6 +55,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     
     // PC Device resource routes
+    Route::post('pcdevice/import', [PcDeviceController::class, 'import'])->name('pcdevice.import');
+    Route::get('pcdevice/template', [PcDeviceController::class, 'downloadTemplate'])->name('pcdevice.template');
     Route::resource('pcdevice', PcDeviceController::class);
     Route::put('/pcdevice/{id}', [PcDeviceController::class, 'update'])->name('pcdevice.update');
 
