@@ -17,7 +17,7 @@ class CctvController extends Controller
         $query = Cctv::query();
         
         // Log untuk debug
-        \Log::info('CCTV Filter', [
+        Log::info('CCTV Filter', [
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
         ]);
@@ -33,7 +33,7 @@ class CctvController extends Controller
         
         $cctvs = $query->get();
         
-        \Log::info('CCTV Count', ['count' => $cctvs->count()]);
+        Log::info('CCTV Count', ['count' => $cctvs->count()]);
         
         return Inertia::render('cctv/index', [
             'cctvs' => $cctvs,
