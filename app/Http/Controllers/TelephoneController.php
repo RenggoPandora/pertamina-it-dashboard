@@ -65,16 +65,37 @@ class TelephoneController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-            'excel_file' => 'required|mimes:xlsx,xls,csv|max:2048',
+            'file' => 'required|mimes:xlsx,xls|max:5120', // max 5MB
         ]);
 
         try {
-            Excel::import(new TelephoneImport, $request->file('excel_file'));
+            $file = $request->file('file');
+            $filePath = $file->getRealPath();
             
-            return redirect()->route('telephone.index')->with('success', 'Data Telephone berhasil diimport.');
+            Log::info('Starting Telephone import from file: ' . $file->getClientOriginalName());
+            
+            $import = new TelephoneImport($filePath);
+            Excel::import($import, $file);
+            
+            $stats = $import->getStats();
+            
+            Log::info('Telephone import completed', $stats);
+            
+            if ($stats['failed'] > 0) {
+                return redirect()->back()->with('warning', "Import selesai dengan warning! {$stats['imported']} Telephone berhasil diimport, {$stats['failed']} baris dilewati. Pastikan Status (On/Off/Maintenance) dan Allocation (nama site) sudah benar.");
+            }
+            
+            return redirect()->back()->with('success', "Import berhasil! {$stats['imported']} Telephone berhasil diimport.");
         } catch (\Exception $e) {
-            return redirect()->route('telephone.index')->with('error', 'Gagal mengimport data: ' . $e->getMessage());
+            Log::error('Telephone import failed: ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
+            return redirect()->back()->with('error', 'Import gagal: ' . $e->getMessage());
         }
+    }
+
+    public function downloadTemplate()
+    {
+        return Excel::download(new TelephoneTemplateExport(), 'template_telephone.xlsx');
     }
 
     public function edit($id)

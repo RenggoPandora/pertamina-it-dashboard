@@ -44,7 +44,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     // Telephone specific routes
     Route::post('telephone/import', [TelephoneController::class, 'import'])->name('telephone.import');
-    Route::get('telephone/download-template', [TelephoneController::class, 'template'])->name('telephone.download-template');
+    Route::get('telephone/download-template', [TelephoneController::class, 'downloadTemplate'])->name('telephone.download-template');
     Route::resource('telephone', TelephoneController::class);
     
     // Network Device resource routes
