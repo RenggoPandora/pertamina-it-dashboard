@@ -14,14 +14,20 @@ export default function Radio({ radio, flash, filters }) {
     const [isDeleting, setIsDeleting] = useState(false);
 
     const { data, setData, post, processing, errors, reset } = useForm({
-        excel_file: null,
+        file: null,
     });
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setData('file', file);
+        }
+    };
 
     const handleFileUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setUploadedFile(file);
-            setData('excel_file', file);
+            setData('file', file);
             setShowUploadModal(true);
         }
     };
@@ -34,10 +40,13 @@ export default function Radio({ radio, flash, filters }) {
         e.preventDefault();
         const file = e.dataTransfer.files[0];
         if (file && (file.type.includes('excel') || file.type.includes('spreadsheet') || file.name.endsWith('.xlsx') || file.name.endsWith('.xls'))) {
-            setUploadedFile(file);
-            setData('excel_file', file);
-            setShowUploadModal(true);
+            setData('file', file);
         }
+    };
+
+    const closeUploadModal = () => {
+        setShowUploadModal(false);
+        reset();
     };
 
     const openUploadModal = () => {
@@ -46,21 +55,25 @@ export default function Radio({ radio, flash, filters }) {
 
     const handleUploadConfirm = () => {
         post(route('radio.import'), {
+            preserveState: false,
+            preserveScroll: false,
             onSuccess: () => {
-                setShowUploadModal(false);
-                setUploadedFile(null);
-                reset();
+                closeUploadModal();
+                // Auto refresh after upload
+                router.visit(route('radio.index'), {
+                    method: 'get',
+                    preserveState: false,
+                    preserveScroll: false,
+                });
             },
             onError: () => {
-                // Error handling
+                // Error sudah ditangani oleh flash message
             },
         });
     };
 
-    const handleUploadCancel = () => {
-        setShowUploadModal(false);
-        setUploadedFile(null);
-        reset();
+    const handleDownloadTemplate = () => {
+        window.location.href = route('radio.download-template');
     };
 
     // Add delete handlers
@@ -127,6 +140,23 @@ export default function Radio({ radio, flash, filters }) {
                             <div className="ml-3">
                                 <p className="text-sm font-medium text-green-800 dark:text-green-200">
                                     {flash.success}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {flash?.warning && (
+                    <div className="mb-6 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                        <div className="flex">
+                            <div className="flex-shrink-0">
+                                <svg className="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                </svg>
+                            </div>
+                            <div className="ml-3">
+                                <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                                    {flash.warning}
                                 </p>
                             </div>
                         </div>
@@ -297,86 +327,131 @@ export default function Radio({ radio, flash, filters }) {
 
                 {/* Upload Excel Modal */}
                 {showUploadModal && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
-                        <div className="relative bg-white dark:bg-gray-800 p-6 border w-96 shadow-lg rounded-lg">
-                            {/* Modal Header */}
-                            <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                    Upload File Radio HT
-                                </h3>
-                                <button
-                                    onClick={handleUploadCancel}
-                                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-                                >
-                                    <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </div>
-
-                            {/* Upload Area */}
+                    <div className="fixed inset-0 z-50 overflow-y-auto">
+                        <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                            {/* Background overlay with blur */}
                             <div 
-                                className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center hover:border-green-400 transition-colors"
-                                onDragOver={handleDragOver}
-                                onDrop={handleDrop}
-                            >
-                                {uploadedFile ? (
-                                    <div className="space-y-2">
-                                        <div className="text-green-500">
-                                            <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                        </div>
-                                        <p className="text-sm font-medium text-gray-900 dark:text-white">
-                                            {uploadedFile.name}
-                                        </p>
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                                            {(uploadedFile.size / 1024).toFixed(2)} KB
-                                        </p>
-                                    </div>
-                                ) : (
-                                    <div className="space-y-2">
-                                        <div className="text-gray-400">
-                                            <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <label className="cursor-pointer">
-                                                <span className="text-sm text-red-600 hover:text-red-700 font-medium">
-                                                    Click to upload
-                                                </span>
-                                                <span className="text-sm text-gray-500 dark:text-gray-400"> or drag and drop</span>
-                                                <input
-                                                    type="file"
-                                                    accept=".xlsx,.xls"
-                                                    onChange={handleFileUpload}
-                                                    className="hidden"
-                                                />
-                                            </label>
-                                        </div>
-                                        <p className="text-xs text-gray-400">
-                                            .xlsx (max. 500MB)
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
+                                className="fixed inset-0 transition-opacity backdrop-blur-sm bg-black/30" 
+                                onClick={closeUploadModal}
+                            ></div>
 
-                            {/* Modal Actions */}
-                            <div className="flex items-center justify-end space-x-3 mt-6">
-                                <button
-                                    onClick={handleUploadCancel}
-                                    className="px-4 py-2 text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={handleUploadConfirm}
-                                    disabled={!uploadedFile || processing}
-                                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                >
-                                    {processing ? 'Uploading...' : 'Confirm'}
-                                </button>
+                            {/* Modal panel */}
+                            <div className="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                                {/* Header */}
+                                <div className="bg-gradient-to-r from-green-600 to-green-700 px-4 py-3 sm:px-6">
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="text-lg leading-6 font-medium text-white">
+                                            Upload File Excel Radio HT
+                                        </h3>
+                                        <button
+                                            onClick={closeUploadModal}
+                                            className="text-white hover:text-gray-200 transition-colors"
+                                        >
+                                            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Body */}
+                                <div className="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                    {/* Download Template Button */}
+                                    <div className="mb-4">
+                                        <button
+                                            onClick={handleDownloadTemplate}
+                                            className="w-full flex items-center justify-center px-4 py-2 border border-green-300 dark:border-green-700 rounded-md shadow-sm text-sm font-medium text-green-700 dark:text-green-300 bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/40 transition-colors"
+                                        >
+                                            <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                            Download Template Excel
+                                        </button>
+                                    </div>
+
+                                    {/* Upload Area */}
+                                    <div 
+                                        className="mt-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 hover:border-green-400 dark:hover:border-green-500 transition-colors"
+                                        onDragOver={handleDragOver}
+                                        onDrop={handleDrop}
+                                    >
+                                        {data.file ? (
+                                            <div className="text-center">
+                                                <div className="mx-auto h-12 w-12 text-green-500">
+                                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    </svg>
+                                                </div>
+                                                <p className="mt-2 text-sm font-medium text-gray-900 dark:text-white">
+                                                    {data.file.name}
+                                                </p>
+                                                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                                    {(data.file.size / 1024).toFixed(2)} KB
+                                                </p>
+                                                <button
+                                                    onClick={() => setData('file', null)}
+                                                    className="mt-2 text-sm text-red-600 hover:text-red-700 dark:text-red-400"
+                                                >
+                                                    Remove file
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <div className="text-center">
+                                                <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                                </svg>
+                                                <div className="mt-4">
+                                                    <label className="cursor-pointer">
+                                                        <span className="text-sm font-medium text-green-600 hover:text-green-700 dark:text-green-400">
+                                                            Click to upload
+                                                        </span>
+                                                        <span className="text-sm text-gray-500 dark:text-gray-400"> or drag and drop</span>
+                                                        <input
+                                                            type="file"
+                                                            accept=".xlsx,.xls"
+                                                            onChange={handleFileChange}
+                                                            className="hidden"
+                                                        />
+                                                    </label>
+                                                </div>
+                                                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                                    Excel files only (.xlsx, .xls) up to 5MB
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Format Info */}
+                                    <div className="mt-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                                        <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-2">Format Requirements:</h4>
+                                        <ul className="text-xs text-blue-800 dark:text-blue-400 space-y-1 list-disc list-inside">
+                                            <li>Cell A3: Must contain "Radio HT"</li>
+                                            <li>Cell A6: End Time format for tanggal_pencatatan</li>
+                                            <li>Row 9: Column headers (Name, Amount, Status, Allocation)</li>
+                                            <li>Row 10+: Data rows</li>
+                                            <li>Columns: A=Name, B=Amount, C=Status (On/Off/Maintenance), D=Allocation (Site name)</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                {/* Footer Buttons */}
+                                <div className="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                    <button
+                                        type="button"
+                                        onClick={handleUploadConfirm}
+                                        disabled={!data.file || processing}
+                                        className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {processing ? 'Uploading...' : 'Upload'}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={closeUploadModal}
+                                        className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
