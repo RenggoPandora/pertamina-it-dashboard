@@ -10,6 +10,9 @@ export default function CCTVReadiness({ cctvs = [], filters, flash }) {
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [uploadedFile, setUploadedFile] = useState(null);
 
+    // Search state
+    const [searchQuery, setSearchQuery] = useState('');
+
     const { data, setData, post, processing, errors, reset } = useForm({
         excel_file: null,
     });
@@ -211,12 +214,65 @@ export default function CCTVReadiness({ cctvs = [], filters, flash }) {
                         </div>
                     </div>
                     
+                    {/* Search Box */}
+                    <div className="px-6 py-3 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-600">
+                        <div className="space-y-2">
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    placeholder="Cari berdasarkan nama perangkat atau IP address..."
+                                    className="w-full px-4 py-2 pl-10 pr-4 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+                                />
+                                <svg 
+                                    className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" 
+                                    fill="none" 
+                                    stroke="currentColor" 
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                                {searchQuery && (
+                                    <button
+                                        onClick={() => setSearchQuery('')}
+                                        className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                                    >
+                                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                )}
+                            </div>
+                            {searchQuery && (
+                                <p className="text-xs text-gray-600 dark:text-gray-400">
+                                    Menampilkan {cameras.filter(camera => {
+                                        const query = searchQuery.toLowerCase();
+                                        return (
+                                            camera.nama_perangkat?.toLowerCase().includes(query) ||
+                                            camera.ip_address?.toLowerCase().includes(query)
+                                        );
+                                    }).length} dari {cameras.length} CCTV
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                    
                     <div className="p-6">
-                        {cameras.length === 0 ? (
+                        {cameras.filter(camera => {
+                            if (!searchQuery) return true;
+                            const query = searchQuery.toLowerCase();
+                            return (
+                                camera.nama_perangkat?.toLowerCase().includes(query) ||
+                                camera.ip_address?.toLowerCase().includes(query)
+                            );
+                        }).length === 0 ? (
                             <div className="text-center text-gray-500 dark:text-gray-400 py-8">
                                 <div className="text-6xl mb-4">📹</div>
-                                <p className="text-xl mb-2">Tidak ada CCTV ditemukan</p>
-                                <p>Tambahkan CCTV pertama Anda untuk memulai.</p>
+                                <p className="text-xl mb-2">
+                                    {searchQuery ? 'Tidak ada data yang cocok dengan pencarian' : 'Tidak ada CCTV ditemukan'}
+                                </p>
+                                <p>{searchQuery ? `Pencarian: "${searchQuery}"` : 'Tambahkan CCTV pertama Anda untuk memulai.'}</p>
                             </div>
                         ) : (
                             <div className="overflow-x-auto">
@@ -244,7 +300,14 @@ export default function CCTVReadiness({ cctvs = [], filters, flash }) {
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                        {cameras.map((camera) => {
+                                        {cameras.filter(camera => {
+                                            if (!searchQuery) return true;
+                                            const query = searchQuery.toLowerCase();
+                                            return (
+                                                camera.nama_perangkat?.toLowerCase().includes(query) ||
+                                                camera.ip_address?.toLowerCase().includes(query)
+                                            );
+                                        }).map((camera) => {
                                             const availability = parseFloat(camera.availability);
                                             let availabilityColor = 'text-gray-500';
                                             let availabilityBgColor = 'bg-gray-100 dark:bg-gray-700';

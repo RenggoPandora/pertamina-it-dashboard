@@ -12,6 +12,9 @@ export default function Index() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
 
+  // Search state
+  const [searchQuery, setSearchQuery] = useState('');
+
   // Show flash messages
   useEffect(() => {
     if (flash?.success) {
@@ -370,13 +373,70 @@ export default function Index() {
             </div>
           </div>
 
+          {/* Search Box */}
+          <div className="px-6 py-3 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-600">
+            <div className="space-y-2">
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Cari berdasarkan customer, assignee, summary, atau status..."
+                  className="w-full px-4 py-2 pl-10 pr-4 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+                />
+                <svg 
+                  className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  >
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+              {searchQuery && (
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  Menampilkan {tickets.filter(ticket => {
+                    const query = searchQuery.toLowerCase();
+                    return (
+                      ticket.customer_fullname?.toLowerCase().includes(query) ||
+                      ticket.assignee_name?.toLowerCase().includes(query) ||
+                      ticket.summary?.toLowerCase().includes(query) ||
+                      ticket.status?.toLowerCase().includes(query)
+                    );
+                  }).length} dari {tickets.length} ticket
+                </p>
+              )}
+            </div>
+          </div>
+
           {/* Tabel Ticket */}
           <div className="p-6">
-            {tickets.length === 0 ? (
+            {tickets.filter(ticket => {
+              if (!searchQuery) return true;
+              const query = searchQuery.toLowerCase();
+              return (
+                ticket.customer_fullname?.toLowerCase().includes(query) ||
+                ticket.assignee_name?.toLowerCase().includes(query) ||
+                ticket.summary?.toLowerCase().includes(query) ||
+                ticket.status?.toLowerCase().includes(query)
+              );
+            }).length === 0 ? (
               <div className="text-center text-gray-500 dark:text-gray-400 py-8">
                 <div className="text-6xl mb-4">🎫</div>
-                <p className="text-xl mb-2">No tickets found</p>
-                <p>Create your first ticket to get started.</p>
+                <p className="text-xl mb-2">
+                  {searchQuery ? 'Tidak ada data yang cocok dengan pencarian' : 'No tickets found'}
+                </p>
+                <p>{searchQuery ? `Pencarian: "${searchQuery}"` : 'Create your first ticket to get started.'}</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -393,7 +453,16 @@ export default function Index() {
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                    {tickets.map((ticket) => (
+                    {tickets.filter(ticket => {
+                      if (!searchQuery) return true;
+                      const query = searchQuery.toLowerCase();
+                      return (
+                        ticket.customer_fullname?.toLowerCase().includes(query) ||
+                        ticket.assignee_name?.toLowerCase().includes(query) ||
+                        ticket.summary?.toLowerCase().includes(query) ||
+                        ticket.status?.toLowerCase().includes(query)
+                      );
+                    }).map((ticket) => (
                       <tr key={ticket.id}>
                         <Td>{ticket.id}</Td>
                         <Td>{ticket.customer_fullname}</Td>

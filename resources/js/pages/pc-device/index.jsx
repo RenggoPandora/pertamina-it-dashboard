@@ -13,6 +13,9 @@ export default function PCDevice({ pcDevices = [], filters }) {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedDevice, setSelectedDevice] = useState(null);
 
+    // Search state
+    const [searchQuery, setSearchQuery] = useState('');
+
     // Show flash messages
     useEffect(() => {
         if (flash?.success) {
@@ -213,12 +216,43 @@ export default function PCDevice({ pcDevices = [], filters }) {
                         </div>
                     </div>
                     
+                    {/* Search Box */}
+                    <div className="px-6 py-3 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-600">
+                        <div className="relative">
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder="Cari berdasarkan nama perangkat, jenis, atau alokasi..."
+                                className="w-full px-4 py-2 pl-10 pr-4 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+                            />
+                            <svg 
+                                className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" 
+                                fill="none" 
+                                stroke="currentColor" 
+                                viewBox="0 0 24 24"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                    
                     <div className="p-6">
-                        {devices.length === 0 ? (
+                        {devices.filter(device => {
+                            if (!searchQuery) return true;
+                            const query = searchQuery.toLowerCase();
+                            return (
+                                device.nama_perangkat?.toLowerCase().includes(query) ||
+                                device.jenis?.toLowerCase().includes(query) ||
+                                device.alokasi?.toLowerCase().includes(query)
+                            );
+                        }).length === 0 ? (
                             <div className="text-center text-gray-500 dark:text-gray-400 py-8">
                                 <div className="text-6xl mb-4">💻</div>
-                                <p className="text-xl mb-2">Tidak ada PC Device ditemukan</p>
-                                <p>Tambahkan device pertama Anda untuk memulai.</p>
+                                <p className="text-xl mb-2">
+                                    {searchQuery ? 'Tidak ada data yang cocok dengan pencarian' : 'Tidak ada PC Device ditemukan'}
+                                </p>
+                                <p>{searchQuery ? `Pencarian: "${searchQuery}"` : 'Tambahkan device pertama Anda untuk memulai.'}</p>
                             </div>
                         ) : (
                             <div className="overflow-x-auto">
@@ -246,7 +280,15 @@ export default function PCDevice({ pcDevices = [], filters }) {
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                        {devices.map((device) => (
+                                        {devices.filter(device => {
+                                            if (!searchQuery) return true;
+                                            const query = searchQuery.toLowerCase();
+                                            return (
+                                                device.nama_perangkat?.toLowerCase().includes(query) ||
+                                                device.jenis?.toLowerCase().includes(query) ||
+                                                device.alokasi?.toLowerCase().includes(query)
+                                            );
+                                        }).map((device) => (
                                             <tr key={device.id}>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                                                     {device.nama_perangkat}
