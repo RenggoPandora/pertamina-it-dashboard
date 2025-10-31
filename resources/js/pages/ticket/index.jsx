@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Head, usePage, router, useForm } from '@inertiajs/react';
 import Layout from '@/components/layouts/Layout';
+import DateRangeFilter from '@/components/DateRangeFilter';
 
 export default function Index() {
-  const { tickets, flash } = usePage().props;
+  const { tickets, flash, filters } = usePage().props;
   const [showUploadModal, setShowUploadModal] = useState(false);
   const { data, setData, post, processing, reset } = useForm({
     file: null,
@@ -67,6 +68,17 @@ export default function Index() {
   const openDeleteModal = (ticket) => {
     setSelectedTicket(ticket);
     setShowDeleteModal(true);
+  };
+
+  // Fungsi untuk menangani filter date range
+  const handleDateFilter = ({ startDate, endDate }) => {
+    router.get(route('ticket.index'), {
+      start_date: startDate,
+      end_date: endDate
+    }, {
+      preserveState: true,
+      replace: true,
+    });
   };
 
   return (
@@ -328,8 +340,21 @@ export default function Index() {
         {/* Ticket List */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
           <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Recent Tickets</h3>
-            <div className="flex gap-3">
+            <div>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Recent Tickets</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                {filters?.start_date && filters?.end_date 
+                  ? `Menampilkan data dari ${new Date(filters.start_date).toLocaleDateString('id-ID')} - ${new Date(filters.end_date).toLocaleDateString('id-ID')}`
+                  : 'Kelola data support tickets dan service requests'
+                }
+              </p>
+            </div>
+            <div className="flex space-x-3">
+              <DateRangeFilter 
+                onFilter={handleDateFilter}
+                defaultStartDate={filters?.start_date || ''}
+                defaultEndDate={filters?.end_date || ''}
+              />
               <button onClick={openUploadModal} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors inline-flex items-center">
                 <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />

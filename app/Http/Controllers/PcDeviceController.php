@@ -175,10 +175,10 @@ class PCDeviceController extends Controller
             Log::info('PC Device import completed', $stats);
             
             if ($stats['failed'] > 0) {
-                return redirect()->back()->with('warning', "Import selesai dengan warning! {$stats['imported']} PC Device berhasil diimport, {$stats['failed']} baris dilewati. Pastikan Type (Desktop/Notebook/Printer) dan Allocation (MPS/SM5) sudah benar.");
+                return redirect()->back()->with('warning', "Import selesai: {$stats['created']} data baru, {$stats['updated']} data diupdate, {$stats['failed']} baris dilewati. Pastikan Type (Desktop/Notebook/Printer) dan Allocation (MPS/SM5) sudah benar.");
             }
             
-            return redirect()->back()->with('success', "Import berhasil! {$stats['imported']} PC Device berhasil diimport.");
+            return redirect()->back()->with('success', "Import berhasil! {$stats['imported']} PC Device diproses: {$stats['created']} data baru, {$stats['updated']} data diupdate.");
         } catch (\Exception $e) {
             Log::error('PC Device import failed: ' . $e->getMessage());
             Log::error($e->getTraceAsString());

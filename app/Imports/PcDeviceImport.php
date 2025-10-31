@@ -3,18 +3,21 @@
 namespace App\Imports;
 
 use App\Models\PcDevice;
-use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Collection;
 
-class PcDeviceImport implements ToModel, WithStartRow
+class PcDeviceImport implements ToCollection, WithStartRow
 {
     protected $filePath;
     protected $imported = 0;
     protected $failed = 0;
+    protected $created = 0;
+    protected $updated = 0;
     protected $tanggalPencatatan;
 
     public function __construct($filePath)
@@ -67,89 +70,104 @@ class PcDeviceImport implements ToModel, WithStartRow
         return 10; // Data dimulai dari baris 10
     }
 
-    public function model(array $row)
+    public function collection(Collection $rows)
     {
-        try {
-            // Skip jika baris kosong
-            if (empty($row[0]) && empty($row[1]) && empty($row[2])) {
-                return null;
-            }
+        foreach ($rows as $index => $row) {
+            try {
+                $rowNumber = $index + 10; // Karena start dari baris 10
+                
+                // Skip jika baris kosong
+                if (empty($row[0]) && empty($row[1]) && empty($row[2])) {
+                    continue;
+                }
 
-            // Skip jika baris NOTE atau footer
-            if (stripos($row[0], 'NOTE') !== false || stripos($row[0], '****') !== false) {
-                return null;
-            }
+                // Skip jika baris NOTE atau footer
+                if (stripos($row[0] ?? '', 'NOTE') !== false || stripos($row[0] ?? '', '****') !== false) {
+                    Log::info("Skipping NOTE row {$rowNumber}");
+                    continue;
+                }
 
-            Log::info('Processing PC Device row', ['row' => $row]);
+                Log::info("Processing PC Device row {$rowNumber}", ['row' => $row->toArray()]);
 
-            // A=nama_perangkat, B=jenis, C=jumlah, D=alokasi
-            $namaPeangkat = trim($row[0] ?? '');
-            $jenis = trim($row[1] ?? '');
-            $jumlah = (int)($row[2] ?? 0);
-            $alokasi = strtoupper(trim($row[3] ?? ''));
+                // A=nama_perangkat, B=jenis, C=jumlah, D=alokasi
+                $namaPeangkat = trim($row[0] ?? '');
+                $jenis = trim($row[1] ?? '');
+                $jumlah = (int)($row[2] ?? 0);
+                $alokasi = strtoupper(trim($row[3] ?? ''));
 
-            // Validasi field wajib
-            if (empty($namaPeangkat)) {
-                Log::warning('PC Device row skipped: nama_perangkat is empty', ['row' => $row]);
+                // Validasi field wajib
+                if (empty($namaPeangkat)) {
+                    Log::warning("Row {$rowNumber}: nama_perangkat is empty", ['row' => $row->toArray()]);
+                    $this->failed++;
+                    continue;
+                }
+
+                // Validasi alokasi harus MPS atau SM5
+                if (!empty($alokasi) && !in_array($alokasi, ['MPS', 'SM5'])) {
+                    Log::warning("Row {$rowNumber}: invalid alokasi", [
+                        'alokasi' => $alokasi,
+                        'expected' => 'MPS or SM5'
+                    ]);
+                    $this->failed++;
+                    continue;
+                }
+
+                // Validasi jenis harus desktop, notebook, atau printer
+                $jenisLower = strtolower($jenis);
+                if (!empty($jenis) && !in_array($jenisLower, ['desktop', 'notebook', 'printer'])) {
+                    Log::warning("Row {$rowNumber}: invalid jenis", [
+                        'jenis' => $jenis,
+                        'expected' => 'desktop, notebook, or printer'
+                    ]);
+                    $this->failed++;
+                    continue;
+                }
+
+                // Cek apakah data sudah ada berdasarkan nama_perangkat + jenis + alokasi
+                $existingDevice = PcDevice::where([
+                    'nama_perangkat' => $namaPeangkat,
+                    'jenis' => $jenisLower ?: null,
+                    'alokasi' => $alokasi ?: null,
+                ])->first();
+
+                // Prepare data untuk save
+                $dataToSave = [
+                    'jumlah' => $jumlah,
+                    'tanggal_pencatatan' => $this->tanggalPencatatan,
+                    'updated_by' => Auth::id(),
+                ];
+
+                // Jika data baru (create), tambahkan created_by
+                if (!$existingDevice) {
+                    $dataToSave['created_by'] = Auth::id();
+                }
+
+                // ✅ updateOrCreate berdasarkan nama_perangkat, jenis, dan alokasi
+                $pcDevice = PcDevice::updateOrCreate(
+                    [
+                        'nama_perangkat' => $namaPeangkat,
+                        'jenis' => $jenisLower ?: null,
+                        'alokasi' => $alokasi ?: null,
+                    ],
+                    $dataToSave
+                );
+
+                // Track apakah ini create atau update
+                if ($pcDevice->wasRecentlyCreated) {
+                    $this->created++;
+                    Log::info("✅ Created PC Device: {$namaPeangkat} - {$jenisLower} - {$alokasi}");
+                } else {
+                    $this->updated++;
+                    Log::info("🔄 Updated PC Device: {$namaPeangkat} - {$jenisLower} - {$alokasi}");
+                }
+
+                $this->imported++;
+
+            } catch (\Exception $e) {
+                $rowNumber = $index + 10;
+                Log::error("Row {$rowNumber} processing error: " . $e->getMessage());
                 $this->failed++;
-                return null;
             }
-
-            // Validasi alokasi harus MPS atau SM5
-            if (!empty($alokasi) && !in_array($alokasi, ['MPS', 'SM5'])) {
-                Log::warning('PC Device row skipped: invalid alokasi', [
-                    'row' => $row,
-                    'alokasi' => $alokasi,
-                    'expected' => 'MPS or SM5'
-                ]);
-                $this->failed++;
-                return null;
-            }
-
-            // Validasi jenis harus desktop, notebook, atau printer
-            $jenisLower = strtolower($jenis);
-            if (!empty($jenis) && !in_array($jenisLower, ['desktop', 'notebook', 'printer'])) {
-                Log::warning('PC Device row skipped: invalid jenis', [
-                    'row' => $row,
-                    'jenis' => $jenis,
-                    'expected' => 'desktop, notebook, or printer'
-                ]);
-                $this->failed++;
-                return null;
-            }
-
-            // Prepare data untuk insert
-            $pcDeviceData = [
-                'nama_perangkat' => $namaPeangkat,
-                'jenis' => $jenisLower ?: null,
-                'jumlah' => $jumlah,
-                'alokasi' => $alokasi ?: null,
-                'tanggal_pencatatan' => $this->tanggalPencatatan,
-            ];
-
-            // Tambahkan created_by dan updated_by jika user sedang login
-            if (Auth::check()) {
-                $pcDeviceData['created_by'] = Auth::id();
-                $pcDeviceData['updated_by'] = Auth::id();
-            }
-
-            $pcDevice = PcDevice::create($pcDeviceData);
-
-            Log::info('PC Device created successfully', [
-                'id' => $pcDevice->id,
-                'nama_perangkat' => $namaPeangkat
-            ]);
-
-            $this->imported++;
-            return $pcDevice;
-
-        } catch (\Exception $e) {
-            Log::error('Failed to import PC Device row', [
-                'error' => $e->getMessage(),
-                'row' => $row ?? []
-            ]);
-            $this->failed++;
-            return null;
         }
     }
 
@@ -157,6 +175,8 @@ class PcDeviceImport implements ToModel, WithStartRow
     {
         return [
             'imported' => $this->imported,
+            'created' => $this->created,
+            'updated' => $this->updated,
             'failed' => $this->failed,
         ];
     }

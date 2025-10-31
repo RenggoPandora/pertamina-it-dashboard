@@ -181,7 +181,7 @@ class CctvController extends Controller
             if ($stats['failed'] > 0 && $stats['success'] > 0) {
                 return redirect()
                     ->route('cctv.index')
-                    ->with('success', "Import selesai: {$stats['success']} berhasil, {$stats['failed']} gagal. Errors: " . implode(', ', array_slice($stats['errors'], 0, 3)));
+                    ->with('warning', "Import selesai: {$stats['created']} data baru, {$stats['updated']} data diupdate, {$stats['failed']} gagal. Errors: " . implode(', ', array_slice($stats['errors'], 0, 3)));
             }
 
             // Jika semua gagal
@@ -194,7 +194,7 @@ class CctvController extends Controller
             // Jika semua berhasil
             return redirect()
                 ->route('cctv.index')
-                ->with('success', "Berhasil import {$stats['success']} data CCTV");
+                ->with('success', "Import berhasil! {$stats['success']} CCTV diproses: {$stats['created']} data baru, {$stats['updated']} data diupdate.");
 
         } catch (\Exception $e) {
             Log::error('CCTV import error: ' . $e->getMessage());

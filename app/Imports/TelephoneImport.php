@@ -4,18 +4,21 @@ namespace App\Imports;
 
 use App\Models\Telephone;
 use App\Models\Site;
-use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Collection;
 
-class TelephoneImport implements ToModel, WithStartRow
+class TelephoneImport implements ToCollection, WithStartRow
 {
     protected $filePath;
     protected $imported = 0;
     protected $failed = 0;
+    protected $created = 0;
+    protected $updated = 0;
     protected $tanggalPencatatan;
 
     public function __construct($filePath)
@@ -68,108 +71,126 @@ class TelephoneImport implements ToModel, WithStartRow
         return 10; // Data dimulai dari baris 10
     }
 
-    public function model(array $row)
+    public function collection(Collection $rows)
     {
-        try {
-            // Skip jika baris kosong
-            if (empty($row[0]) && empty($row[1]) && empty($row[2])) {
-                return null;
-            }
-
-            // Skip jika baris NOTE atau footer
-            if (stripos($row[0], 'NOTE') !== false || stripos($row[0], '****') !== false) {
-                return null;
-            }
-
-            Log::info('Processing Telephone row', ['row' => $row]);
-
-            // A=nama_pic, B=jumlah, C=status, D=site_id (allocation/lokasi)
-            $namaPic = trim($row[0] ?? '');
-            $jumlah = (int)($row[1] ?? 0);
-            $status = strtolower(trim($row[2] ?? ''));
-            $lokasiText = trim($row[3] ?? '');
-
-            // Validasi field wajib
-            if (empty($namaPic)) {
-                Log::warning('Telephone row skipped: nama_pic is empty', ['row' => $row]);
-                $this->failed++;
-                return null;
-            }
-
-            // Validasi status harus on, off, atau maintenance
-            if (!empty($status) && !in_array($status, ['on', 'off', 'maintenance'])) {
-                Log::warning('Telephone row skipped: invalid status', [
-                    'row' => $row,
-                    'status' => $status,
-                    'expected' => 'on, off, or maintenance'
-                ]);
-                $this->failed++;
-                return null;
-            }
-
-            // Cari site_id berdasarkan lokasi text
-            $siteId = null;
-            if (!empty($lokasiText)) {
-                $site = Site::where('lokasi', 'LIKE', '%' . $lokasiText . '%')
-                           ->orWhere('lokasi', $lokasiText)
-                           ->first();
+        foreach ($rows as $index => $row) {
+            try {
+                $rowNumber = $index + 10; // Karena start dari baris 10
                 
-                if ($site) {
-                    $siteId = $site->id;
-                    Log::info('Site found', ['lokasi' => $lokasiText, 'site_id' => $siteId]);
-                } else {
-                    Log::warning('Telephone row skipped: site not found', [
-                        'row' => $row,
-                        'lokasi' => $lokasiText
+                // Skip jika baris kosong
+                if (empty($row[0]) && empty($row[1]) && empty($row[2])) {
+                    continue;
+                }
+
+                // Skip jika baris NOTE atau footer
+                if (stripos($row[0] ?? '', 'NOTE') !== false || stripos($row[0] ?? '', '****') !== false) {
+                    Log::info("Skipping NOTE row {$rowNumber}");
+                    continue;
+                }
+
+                Log::info("Processing Telephone row {$rowNumber}", ['row' => $row->toArray()]);
+
+                // A=nama_pic, B=jumlah, C=status, D=site_id (allocation/lokasi)
+                $namaPic = trim($row[0] ?? '');
+                $jumlah = (int)($row[1] ?? 0);
+                $status = strtolower(trim($row[2] ?? ''));
+                $lokasiText = trim($row[3] ?? '');
+
+                // Validasi field wajib
+                if (empty($namaPic)) {
+                    Log::warning("Row {$rowNumber}: nama_pic is empty", ['row' => $row->toArray()]);
+                    $this->failed++;
+                    continue;
+                }
+
+                // Validasi status harus on, off, atau maintenance
+                if (!empty($status) && !in_array($status, ['on', 'off', 'maintenance'])) {
+                    Log::warning("Row {$rowNumber}: invalid status", [
+                        'status' => $status,
+                        'expected' => 'on, off, or maintenance'
                     ]);
                     $this->failed++;
-                    return null;
+                    continue;
                 }
-            } else {
-                Log::warning('Telephone row skipped: allocation/site is empty', ['row' => $row]);
+
+                // Cari site_id berdasarkan lokasi text
+                $siteId = null;
+                if (!empty($lokasiText)) {
+                    $site = Site::where('lokasi', 'LIKE', '%' . $lokasiText . '%')
+                               ->orWhere('lokasi', $lokasiText)
+                               ->first();
+                    
+                    if ($site) {
+                        $siteId = $site->id;
+                        Log::info("Site found for row {$rowNumber}", ['lokasi' => $lokasiText, 'site_id' => $siteId]);
+                    } else {
+                        Log::warning("Row {$rowNumber}: site not found", ['lokasi' => $lokasiText]);
+                        $this->failed++;
+                        continue;
+                    }
+                } else {
+                    Log::warning("Row {$rowNumber}: allocation/site is empty");
+                    $this->failed++;
+                    continue;
+                }
+
+                // Set default status jika kosong
+                $status = $status ?: 'on';
+
+                // Cek apakah data sudah ada berdasarkan nama_pic + site_id + status
+                $existingTelephone = Telephone::where([
+                    'nama_pic' => $namaPic,
+                    'site_id' => $siteId,
+                    'status' => $status,
+                ])->first();
+
+                // Prepare data untuk save
+                $dataToSave = [
+                    'jumlah' => $jumlah,
+                    'tanggal_pencatatan' => $this->tanggalPencatatan,
+                    'updated_by' => Auth::id(),
+                ];
+
+                // Jika data baru (create), tambahkan created_by
+                if (!$existingTelephone) {
+                    $dataToSave['created_by'] = Auth::id();
+                }
+
+                // ✅ updateOrCreate berdasarkan nama_pic, site_id, dan status
+                $telephone = Telephone::updateOrCreate(
+                    [
+                        'nama_pic' => $namaPic,
+                        'site_id' => $siteId,
+                        'status' => $status,
+                    ],
+                    $dataToSave
+                );
+
+                // Track apakah ini create atau update
+                if ($telephone->wasRecentlyCreated) {
+                    $this->created++;
+                    Log::info("✅ Created Telephone: {$namaPic} - Site ID {$siteId} - {$status}");
+                } else {
+                    $this->updated++;
+                    Log::info("🔄 Updated Telephone: {$namaPic} - Site ID {$siteId} - {$status}");
+                }
+
+                $this->imported++;
+
+            } catch (\Exception $e) {
+                $rowNumber = $index + 10;
+                Log::error("Row {$rowNumber} processing error: " . $e->getMessage());
                 $this->failed++;
-                return null;
             }
-
-            // Prepare data untuk insert
-            $telephoneData = [
-                'nama_pic' => $namaPic,
-                'jumlah' => $jumlah,
-                'status' => $status ?: 'on',
-                'site_id' => $siteId,
-                'tanggal_pencatatan' => $this->tanggalPencatatan,
-            ];
-
-            // Tambahkan created_by dan updated_by jika user sedang login
-            if (Auth::check()) {
-                $telephoneData['created_by'] = Auth::id();
-                $telephoneData['updated_by'] = Auth::id();
-            }
-
-            $telephone = Telephone::create($telephoneData);
-
-            Log::info('Telephone created successfully', [
-                'id' => $telephone->id,
-                'nama_pic' => $namaPic
-            ]);
-
-            $this->imported++;
-            return $telephone;
-
-        } catch (\Exception $e) {
-            Log::error('Failed to import Telephone row', [
-                'error' => $e->getMessage(),
-                'row' => $row ?? []
-            ]);
-            $this->failed++;
-            return null;
         }
     }
 
-    public function getStats()
+    public function getStats(): array
     {
         return [
             'imported' => $this->imported,
+            'created' => $this->created,
+            'updated' => $this->updated,
             'failed' => $this->failed,
         ];
     }

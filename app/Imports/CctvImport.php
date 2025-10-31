@@ -3,18 +3,22 @@
 namespace App\Imports;
 
 use App\Models\Cctv;
-use Maatwebsite\Excel\Concerns\ToModel;
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
-class CctvImport implements ToModel, WithStartRow
+class CctvImport implements ToCollection, WithStartRow
 {
     private $tanggalPencatatan;
     private $kepemilikan = 'sewa'; // Default kepemilikan
     private $errors = [];
     private $successCount = 0;
+    private $createdCount = 0;
+    private $updatedCount = 0;
     private $failureCount = 0;
 
     /**
@@ -87,79 +91,111 @@ class CctvImport implements ToModel, WithStartRow
      * G: Down (kolom ke-7, index 6)
      * I: Availability (kolom ke-9, index 8)
      */
-    public function model(array $row)
+    public function collection(Collection $rows)
     {
-        try {
-            // Log raw data untuk debugging
-            Log::info("Processing row: " . json_encode($row));
+        foreach ($rows as $index => $row) {
+            try {
+                $rowNumber = $index + 10; // Karena start dari baris 10
+                
+                // Log raw data untuk debugging
+                Log::info("Processing CCTV row {$rowNumber}: " . json_encode($row->toArray()));
 
-            // Skip baris kosong
-            if (empty($row[0]) && empty($row[1])) {
-                Log::info("Skipping empty row");
-                return null;
-            }
+                // Skip baris kosong
+                if (empty($row[0]) && empty($row[1])) {
+                    Log::info("Skipping empty row {$rowNumber}");
+                    continue;
+                }
 
-            // ✅ Validasi kolom wajib diisi
-            $name = trim($row[0] ?? '');
-            $ipAddress = trim($row[1] ?? '');
-            $up = trim($row[2] ?? ''); // Kolom C
-            $down = trim($row[6] ?? ''); // Kolom G (index 6)
-            $availability = trim($row[8] ?? ''); // Kolom I (index 8)
+                // ✅ Validasi kolom wajib diisi
+                $name = trim($row[0] ?? '');
+                $ipAddress = trim($row[1] ?? '');
+                $up = trim($row[2] ?? ''); // Kolom C
+                $down = trim($row[6] ?? ''); // Kolom G (index 6)
+                $availability = trim($row[8] ?? ''); // Kolom I (index 8)
 
-            // Validasi field wajib
-            if (empty($name)) {
-                $this->errors[] = "Name is required (Column A)";
+                // Validasi field wajib
+                if (empty($name)) {
+                    $this->errors[] = "Row {$rowNumber}: Name is required (Column A)";
+                    $this->failureCount++;
+                    continue;
+                }
+
+                if (empty($ipAddress)) {
+                    $this->errors[] = "Row {$rowNumber}: IP Address is required for {$name} (Column B)";
+                    $this->failureCount++;
+                    continue;
+                }
+
+                // Validasi format IP Address
+                if (!filter_var($ipAddress, FILTER_VALIDATE_IP)) {
+                    $this->errors[] = "Row {$rowNumber}: Invalid IP Address format for {$name}: {$ipAddress}";
+                    $this->failureCount++;
+                    continue;
+                }
+
+                // Clean availability (hapus %, convert to number)
+                $availability = str_replace(['%', ' '], '', $availability);
+                $availability = is_numeric($availability) ? floatval($availability) : 0;
+
+                // Tentukan status berdasarkan availability
+                $status = 'online';
+                if ($availability == 0) {
+                    $status = 'offline';
+                }
+
+                // Format up dan down
+                $up = !empty($up) ? $up : '0';
+                $down = !empty($down) ? $down : '0';
+
+                // Cek apakah data sudah ada berdasarkan nama_perangkat + ip_address + kepemilikan
+                $existingCctv = Cctv::where([
+                    'nama_perangkat' => $name,
+                    'ip_address' => $ipAddress,
+                    'kepemilikan' => $this->kepemilikan,
+                ])->first();
+
+                // Prepare data untuk save
+                $dataToSave = [
+                    'up' => $up,
+                    'down' => $down,
+                    'availability' => strval($availability), // Store as string to match existing format
+                    'status' => $status,
+                    'tanggal_pencatatan' => $this->tanggalPencatatan,
+                    'updated_by' => Auth::id(),
+                ];
+
+                // Jika data baru (create), tambahkan created_by
+                if (!$existingCctv) {
+                    $dataToSave['created_by'] = Auth::id();
+                }
+
+                // ✅ updateOrCreate berdasarkan nama_perangkat, ip_address, dan kepemilikan
+                $cctv = Cctv::updateOrCreate(
+                    [
+                        'nama_perangkat' => $name,
+                        'ip_address' => $ipAddress,
+                        'kepemilikan' => $this->kepemilikan,
+                    ],
+                    $dataToSave
+                );
+
+                // Track apakah ini create atau update
+                if ($cctv->wasRecentlyCreated) {
+                    $this->createdCount++;
+                    Log::info("✅ Created CCTV: {$name} - {$ipAddress} - {$this->kepemilikan} - Availability: {$availability}%");
+                } else {
+                    $this->updatedCount++;
+                    Log::info("🔄 Updated CCTV: {$name} - {$ipAddress} - {$this->kepemilikan} - Availability: {$availability}%");
+                }
+
+                $this->successCount++;
+
+            } catch (\Exception $e) {
+                $rowNumber = $index + 10;
+                $this->errors[] = "Row {$rowNumber}: Error processing row - " . $e->getMessage();
                 $this->failureCount++;
-                return null;
+                Log::error("Row {$rowNumber} processing error: " . $e->getMessage());
             }
-
-            if (empty($ipAddress)) {
-                $this->errors[] = "IP Address is required for {$name} (Column B)";
-                $this->failureCount++;
-                return null;
-            }
-
-            // Validasi format IP Address
-            if (!filter_var($ipAddress, FILTER_VALIDATE_IP)) {
-                $this->errors[] = "Invalid IP Address format for {$name}: {$ipAddress}";
-                $this->failureCount++;
-                return null;
-            }
-
-            // Clean availability (hapus %, convert to number)
-            $availability = str_replace(['%', ' '], '', $availability);
-            $availability = is_numeric($availability) ? floatval($availability) : 0;
-
-            // Tentukan status berdasarkan availability
-            $status = 'online';
-            if ($availability == 0) {
-                $status = 'offline';
-            }
-
-            // Format up dan down
-            $up = !empty($up) ? $up : '0';
-            $down = !empty($down) ? $down : '0';
-
-            Log::info("✅ Valid CCTV data: {$name} - {$ipAddress} - Availability: {$availability}%");
-
-            $this->successCount++;
-
-            return new Cctv([
-                'nama_perangkat' => $name,
-                'ip_address' => $ipAddress,
-                'up' => $up,
-                'down' => $down,
-                'availability' => strval($availability), // Store as string to match existing format
-                'status' => $status,
-                'tanggal_pencatatan' => $this->tanggalPencatatan,
-                'kepemilikan' => $this->kepemilikan,
-            ]);
-
-        } catch (\Exception $e) {
-            $this->errors[] = "Error processing row: " . $e->getMessage();
-            $this->failureCount++;
-            Log::error("Row processing error: " . $e->getMessage());
-            return null;
         }
     }
 
@@ -170,6 +206,8 @@ class CctvImport implements ToModel, WithStartRow
     {
         return [
             'success' => $this->successCount,
+            'created' => $this->createdCount,
+            'updated' => $this->updatedCount,
             'failed' => $this->failureCount,
             'errors' => $this->errors,
         ];

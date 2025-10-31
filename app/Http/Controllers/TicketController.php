@@ -9,14 +9,31 @@ use App\Imports\TicketImport;
 use App\Exports\TicketTemplateExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class TicketController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $tickets = Ticket::all();
+        $request->validate([
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
+        ]);
+
+        $query = Ticket::query();
+
+        // Filter berdasarkan tanggal jika ada
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $startDate = Carbon::parse($request->start_date)->startOfDay();
+            $endDate = Carbon::parse($request->end_date)->endOfDay();
+            $query->whereBetween('tanggal_pencatatan', [$startDate, $endDate]);
+        }
+
+        $tickets = $query->orderBy('tanggal_pencatatan', 'desc')->get();
+
         return Inertia::render('ticket/index', [
-            'tickets' => $tickets
+            'tickets' => $tickets,
+            'filters' => $request->only(['start_date', 'end_date']),
         ]);
     }
 
@@ -90,7 +107,11 @@ class TicketController extends Controller
             
             Log::info('Ticket import completed', $stats);
             
-            return redirect()->back()->with('success', "Import berhasil! {$stats['imported']} ticket berhasil diimport, {$stats['failed']} gagal.");
+            if ($stats['failed'] > 0) {
+                return redirect()->back()->with('warning', "Import selesai: {$stats['created']} data baru, {$stats['updated']} data diupdate, {$stats['failed']} gagal.");
+            }
+            
+            return redirect()->back()->with('success', "Import berhasil! {$stats['imported']} ticket diproses: {$stats['created']} data baru, {$stats['updated']} data diupdate.");
         } catch (\Exception $e) {
             Log::error('Ticket import failed: ' . $e->getMessage());
             Log::error($e->getTraceAsString());

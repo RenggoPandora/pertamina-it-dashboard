@@ -166,13 +166,14 @@ class NetworkDeviceController extends Controller
             $stats = $import->getStats();
             
             if ($stats['failed'] > 0) {
-                $errorMessage = "Import selesai dengan {$stats['success']} sukses dan {$stats['failed']} gagal. ";
+                $errorMessage = "Import selesai: {$stats['created']} created, {$stats['updated']} updated, {$stats['failed']} gagal. ";
                 $errorMessage .= "Errors: " . implode(', ', array_slice($stats['errors'], 0, 3));
                 
-                return redirect()->back()->with('error', $errorMessage);
+                return redirect()->back()->with('warning', $errorMessage);
             }
             
-            $successMessage = "Berhasil mengimport {$stats['success']} Network Device ({$stats['jenis']})";
+            $successMessage = "Berhasil mengimport {$stats['success']} Network Device ({$stats['jenis']}): ";
+            $successMessage .= "{$stats['created']} data baru, {$stats['updated']} data diupdate";
             return redirect()->back()->with('success', $successMessage);
             
         } catch (\Exception $e) {

@@ -19,6 +19,18 @@ class UserSeeder extends Seeder
             'password' => Hash::make('Admin123.'),
         ]);
 
-        $this->command->info('User seeder completed successfully!');
+        User::create([
+            'name' => 'Admin2',
+            'email' => 'admin2@pertamina.com',
+            'password' => Hash::make('Admin123.'),
+        ]);
+
+        User::create([
+            'name' => 'Admin3',
+            'email' => 'admin3@pertamina.com',
+            'password' => Hash::make('Admin123.'),
+        ]);
+
+        $this->command->info('User seeder completed successfully! Created 3 admin users.');
     }
 }

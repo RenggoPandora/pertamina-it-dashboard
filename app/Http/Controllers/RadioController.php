@@ -130,10 +130,10 @@ class RadioController extends Controller
             Log::info('Radio HT import completed', $stats);
             
             if ($stats['failed'] > 0) {
-                return redirect()->back()->with('warning', "Import selesai dengan warning! {$stats['imported']} Radio HT berhasil diimport, {$stats['failed']} baris dilewati. Pastikan Status (On/Off/Maintenance) dan Allocation (nama site) sudah benar.");
+                return redirect()->back()->with('warning', "Import selesai: {$stats['created']} data baru, {$stats['updated']} data diupdate, {$stats['failed']} baris dilewati. Pastikan Status (On/Off/Maintenance) dan Allocation (nama site) sudah benar.");
             }
             
-            return redirect()->back()->with('success', "Import berhasil! {$stats['imported']} Radio HT berhasil diimport.");
+            return redirect()->back()->with('success', "Import berhasil! {$stats['imported']} Radio HT diproses: {$stats['created']} data baru, {$stats['updated']} data diupdate.");
         } catch (\Exception $e) {
             Log::error('Radio HT import failed: ' . $e->getMessage());
             Log::error($e->getTraceAsString());

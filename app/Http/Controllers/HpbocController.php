@@ -129,10 +129,10 @@ class HpbocController extends Controller
             Log::info('HPBOC import completed', $stats);
             
             if ($stats['failed'] > 0) {
-                return redirect()->back()->with('warning', "Import selesai dengan warning! {$stats['imported']} HPBOC berhasil diimport, {$stats['failed']} baris dilewati. Pastikan Status (Baik/Rusak/Maintenance) dan Allocation (nama site) sudah benar.");
+                return redirect()->back()->with('warning', "Import selesai: {$stats['created']} data baru, {$stats['updated']} data diupdate, {$stats['failed']} baris dilewati. Pastikan Status (Baik/Rusak/Maintenance) dan Allocation (nama site) sudah benar.");
             }
             
-            return redirect()->back()->with('success', "Import berhasil! {$stats['imported']} HPBOC berhasil diimport.");
+            return redirect()->back()->with('success', "Import berhasil! {$stats['imported']} HPBOC diproses: {$stats['created']} data baru, {$stats['updated']} data diupdate.");
         } catch (\Exception $e) {
             Log::error('HPBOC import failed: ' . $e->getMessage());
             Log::error($e->getTraceAsString());
